@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Преподаватели | University Management System</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --primary-bg: #eef2ff;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-light: #475569;
+            --white: #ffffff;
+            --shadow: 0 20px 60px rgba(0,0,0,0.08);
+            --shadow-hover: 0 30px 80px rgba(79,70,229,0.15);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
+        .animate-fadeIn { animation: fadeIn 0.6s ease forwards; }
+        .animate-slideInLeft { animation: slideInLeft 0.8s ease forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(79,70,229,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(79,70,229,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 24px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: transparent;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-left .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .topbar-left .logo i {
+            font-size: 28px;
+            color: var(--primary);
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(79,70,229,0.1);
+        }
+
+        .topbar-left .logo span { color: var(--text); }
+        .topbar-left .logo small { 
+            font-size: 13px; 
+            font-weight: 400; 
+            color: var(--text-light);
+            margin-left: 4px;
+        }
+
+        .topbar-left h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .topbar-left h1 small {
+            font-weight: 400;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-left: 8px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-right .icon-btn {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .topbar-right .icon-btn:hover {
+            background: var(--white);
+            color: var(--text);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .topbar-right .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .topbar-right .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(79,70,229,0.3);
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: inline-flex;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h2 i {
+            color: var(--primary);
+        }
+
+        .page-header .stats-badge {
+            font-size: 14px;
+            color: var(--text-light);
+            background: rgba(255,255,255,0.6);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* SEARCH & FILTERS */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 18px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+            background: rgba(255,255,255,0.9);
+        }
+
+        .search-bar select {
+            padding: 12px 18px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .search-bar select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        /* CARD */
+        .card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            background: rgba(255,255,255,0.85);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h3 i {
+            color: var(--primary);
+        }
+
+        .card-header .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table thead th {
+            text-align: left;
+            padding: 12px 12px 12px 0;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 2px solid rgba(226, 232, 240, 0.5);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        table thead th:hover {
+            color: var(--primary);
+        }
+
+        table tbody td {
+            padding: 12px 12px 12px 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        table tbody tr:hover {
+            background: rgba(79,70,229,0.04);
+            border-radius: 8px;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-neutral { background: #e2e8f0; color: #475569; }
+        .badge-purple { background: #ede9fe; color: #7c3aed; }
+        .badge-pink { background: #fce7f3; color: #db2777; }
+        .badge-teal { background: #ccfbf1; color: #0d9488; }
+        .badge-indigo { background: #e0e7ff; color: #4f46e5; }
+        .badge-gold { background: #fef3c7; color: #92400e; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79,70,229,0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(34,197,94,0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34,197,94,0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(239,68,68,0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .btn-xs {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        .btn-icon {
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+
+        /* ACTION BUTTONS GROUP */
+        .action-group {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .action-group .btn {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* NAVIGATION LINKS */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(226, 232, 240, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(79,70,229,0.06);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            background: rgba(79,70,229,0.1);
+        }
+
+        .nav-links a i { font-size: 14px; }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 420px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast.info { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+        .toast.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .toast i { font-size: 20px; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .modal-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .modal-header .close-btn:hover {
+            background: rgba(239,68,68,0.1);
+            color: #ef4444;
+        }
+
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .modal-body .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .modal-body label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .modal-body input,
+        .modal-body select,
+        .modal-body textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+            background: var(--bg);
+        }
+
+        .modal-body input:focus,
+        .modal-body select:focus,
+        .modal-body textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .modal-body textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        /* TEACHER CARD VIEW */
+        .teacher-profile-header {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            padding: 20px;
+            background: var(--primary-bg);
+            border-radius: 12px;
+        }
+
+        .teacher-profile-header .photo {
+            font-size: 72px;
+        }
+
+        .teacher-profile-header .info h2 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .teacher-profile-header .info .details {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            color: var(--text-light);
+        }
+
+        .teacher-profile-header .info .details span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .modal-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 12px; }
+            
+            .topbar-left .logo span,
+            .topbar-left .logo small {
+                display: none;
+            }
+
+            .topbar-left h1 small {
+                display: none;
+            }
+
+            .page-header h2 {
+                font-size: 22px;
+            }
+
+            .search-bar input {
+                min-width: 100%;
+            }
+
+            .search-bar select {
+                width: 100%;
+            }
+
+            .card {
+                padding: 18px 16px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .modal {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .action-group {
+                flex-direction: column;
+            }
+
+            .teacher-profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-left h1 {
+                font-size: 18px;
+            }
+
+            .topbar-right .icon-btn {
+                padding: 6px 8px;
+                font-size: 16px;
+            }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Успешно!</span>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-chalkboard-teacher"></i> Профиль преподавателя</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Заполняется динамически -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Закрыть</button>
+                <button class="btn btn-primary" onclick="showToast('success', 'Данные сохранены')">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="grid-bg"></div>
+
+        <div class="container">
+            
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <a href="index.html" class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>UniSystem <small>v4.0</small></span>
+                    </a>
+                    <h1>
+                        Преподаватели
+                        <small>Управление преподавательским составом</small>
+                    </h1>
+                </div>
+                <div class="topbar-right">
+                    <button class="icon-btn" title="Поиск" onclick="document.getElementById('searchInput').focus()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" title="Уведомления" onclick="showToast('info', 'Нет новых уведомлений')">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="icon-btn" title="Тема" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="avatar" id="userAvatar" title="Профиль">АИ</div>
+                </div>
+            </header>
+            <!-- BREADCRUMB -->
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                <a href="students.html"><i class="fas fa-user-graduate"></i> Студенты</a>
+               
+                <a href="groups.html"><i class="fas fa-users"></i> Группы</a>
+                
+                <a href="grades.html"><i class="fas fa-chart-line"></i> Оценки</a>
+                <a href="schedule.html"><i class="fas fa-calendar-alt"></i> Расписание</a>
+                <a href="library.html"><i class="fas fa-book"></i> Библиотека</a>
+                <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+                
+               
+            </div>
+            <br>
+            <br>
+
+
+            <!-- PAGE HEADER -->
+            <div class="page-header animate-fadeInUp">
+                <h2>
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Преподавательский состав
+                </h2>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <span class="stats-badge">
+                        <i class="fas fa-users"></i> Всего: <strong id="totalTeachers">8</strong>
+                    </span>
+                    <button class="btn btn-primary btn-sm" onclick="showCreateForm()">
+                        <i class="fas fa-user-plus"></i> Добавить
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTERS -->
+            <div class="search-bar animate-fadeInUp" style="animation-delay:0.05s;">
+                <input type="text" id="searchInput" placeholder="🔍 Поиск по ФИО, кафедре, предметам, ИИН..." oninput="filterTable()" />
+                <select id="departmentFilter" onchange="filterTable()">
+                    <option value="">Все кафедры</option>
+                    <option value="Информационных систем">Информационных систем</option>
+                    <option value="Прикладной математики">Прикладной математики</option>
+                    <option value="Программной инженерии">Программной инженерии</option>
+                    <option value="Бизнес-аналитики">Бизнес-аналитики</option>
+                    <option value="Экономической теории">Экономической теории</option>
+                    <option value="Гражданского права">Гражданского права</option>
+                </select>
+                <select id="degreeFilter" onchange="filterTable()">
+                    <option value="">Все степени</option>
+                    <option value="Доктор наук">Доктор наук</option>
+                    <option value="Кандидат наук">Кандидат наук</option>
+                    <option value="Профессор">Профессор</option>
+                    <option value="Доцент">Доцент</option>
+                    <option value="Старший преподаватель">Старший преподаватель</option>
+                </select>
+            </div>
+
+            <!-- TEACHERS TABLE -->
+            <div class="card animate-fadeInUp" style="animation-delay:0.1s;">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Все преподаватели</h3>
+                    <div class="actions">
+                        <button class="btn btn-sm btn-outline" onclick="exportData('pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-sm btn-outline" onclick="exportData('excel')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="btn btn-sm btn-outline" onclick="window.print()">
+                            <i class="fas fa-print"></i> Печать
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table id="teachersTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">#</th>
+                                <th onclick="sortTable(1)">ФИО <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable(2)">Кафедра</th>
+                                <th onclick="sortTable(3)">Должность</th>
+                                <th onclick="sortTable(4)">Ученая степень</th>
+                                <th onclick="sortTable(5)">Стаж</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachersBody">
+                            <!-- Данные генерируются JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NAVIGATION LINKS -->
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                
+                
+                <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+                
+                <a href="#" onclick="logout(event)" style="color: #ef4444;">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // TOAST SYSTEM
+        // ============================================================
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        let toastTimeout = null;
+
+        function showToast(type, message) {
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+                toast.classList.remove('show');
+            }
+            toast.className = 'toast';
+            const icon = toast.querySelector('i');
+            if (type === 'success') {
+                toast.classList.add('success');
+                icon.className = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else if (type === 'warning') {
+                toast.classList.add('warning');
+                icon.className = 'fas fa-triangle-exclamation';
+            } else {
+                toast.classList.add('info');
+                icon.className = 'fas fa-info-circle';
+            }
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        toast.addEventListener('click', function() {
+            this.classList.remove('show');
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+                toastTimeout = null;
+            }
+        });
+
+        // ============================================================
+        // AUTH CHECK
+        // ============================================================
+        (function() {
+            const isAuth = localStorage.getItem('isAuthenticated');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (isAuth !== 'true' || !user.email) {
+                showToast('error', 'Пожалуйста, войдите в систему');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                return;
+            }
+            const name = user.name || 'Пользователь';
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').textContent = initials || 'АИ';
+        })();
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function logout(e) {
+            e.preventDefault();
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('user');
+                showToast('success', 'Вы успешно вышли');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+            }
+        }
+
+        // ============================================================
+        // THEME TOGGLE
+        // ============================================================
+        let isDark = false;
+
+        function toggleTheme() {
+            isDark = !isDark;
+            const root = document.documentElement;
+            const btn = document.querySelector('.topbar-right .icon-btn[title="Тема"] i');
+            if (isDark) {
+                root.style.setProperty('--bg', '#0f172a');
+                root.style.setProperty('--text', '#f8fafc');
+                root.style.setProperty('--text-light', '#94a3b8');
+                root.style.setProperty('--white', '#1e293b');
+                root.style.setProperty('--shadow', '0 20px 60px rgba(0,0,0,0.4)');
+                btn.className = 'fas fa-sun';
+                showToast('info', 'Тёмная тема включена');
+            } else {
+                root.style.setProperty('--bg', '#f8fafc');
+                root.style.setProperty('--text', '#0f172a');
+                root.style.setProperty('--text-light', '#475569');
+                root.style.setProperty('--white', '#ffffff');
+                root.style.setProperty('--shadow', '0 20px 60px rgba(0,0,0,0.08)');
+                btn.className = 'fas fa-moon';
+                showToast('info', 'Светлая тема включена');
+            }
+        }
+
+        // ============================================================
+        // TEACHERS DATA
+        // ============================================================
+        const teachersData = [
+            {
+                id: 1,
+                photo: '👨‍🏫',
+                fullName: 'Смирнов Андрей Петрович',
+                iin: '123456789012',
+                phone: '+7 (701) 111-22-33',
+                email: 'smirnov@uni.kz',
+                degree: 'Доктор наук',
+                position: 'Профессор',
+                faculty: 'Информационные технологии',
+                department: 'Информационных систем',
+                subjects: 'Базы данных, Программирование, Алгоритмы',
+                cabinet: 'А-301',
+                experience: 18,
+                hireDate: '2008-09-01',
+                status: 'Активен'
+            },
+            {
+                id: 2,
+                photo: '👩‍🏫',
+                fullName: 'Кузнецова Елена Ивановна',
+                iin: '234567890123',
+                phone: '+7 (701) 222-33-44',
+                email: 'kuznetsova@uni.kz',
+                degree: 'Кандидат наук',
+                position: 'Доцент',
+                faculty: 'Математика и технологии',
+                department: 'Прикладной математики',
+                subjects: 'Математика, Математическая статистика, Анализ данных',
+                cabinet: 'Б-205',
+                experience: 12,
+                hireDate: '2012-09-01',
+                status: 'Активен'
+            },
+            {
+                id: 3,
+                photo: '👨‍🏫',
+                fullName: 'Морозов Дмитрий Александрович',
+                iin: '345678901234',
+                phone: '+7 (701) 333-44-55',
+                email: 'morozov@uni.kz',
+                degree: 'Доктор наук',
+                position: 'Профессор',
+                faculty: 'Программная инженерия',
+                department: 'Программной инженерии',
+                subjects: 'Web-разработка, Архитектура ПО, Тестирование',
+                cabinet: 'В-404',
+                experience: 22,
+                hireDate: '2004-09-01',
+                status: 'Активен'
+            },
+            {
+                id: 4,
+                photo: '👩‍🏫',
+                fullName: 'Волкова Ольга Сергеевна',
+                iin: '456789012345',
+                phone: '+7 (701) 444-55-66',
+                email: 'volkova@uni.kz',
+                degree: 'Кандидат наук',
+                position: 'Старший преподаватель',
+                faculty: 'Бизнес-информатика',
+                department: 'Бизнес-аналитики',
+                subjects: 'Бизнес-анализ, Управление проектами, Экономика',
+                cabinet: 'Г-112',
+                experience: 8,
+                hireDate: '2016-09-01',
+                status: 'Активен'
+            },
+            {
+                id: 5,
+                photo: '👨‍🏫',
+                fullName: 'Нуржанов Кайрат Талгатович',
+                iin: '567890123456',
+                phone: '+7 (701) 555-66-77',
+                email: 'nurjanov@uni.kz',
+                degree: 'Доцент',
+                position: 'Доцент',
+                faculty: 'Информационные технологии',
+                department: 'Информационных систем',
+                subjects: 'Кибербезопасность, Сети, Криптография',
+                cabinet: 'А-208',
+                experience: 15,
+                hireDate: '2011-09-01',
+                status: 'Активен'
+            },
+            {
+                id: 6,
+                photo: '👩‍🏫',
+                fullName: 'Петрова Анна Ивановна',
+                iin: '678901234567',
+                phone: '+7 (701) 666-77-88',
+                email: 'petrova@uni.kz',
+                degree: 'Кандидат наук',
+                position: 'Старший преподаватель',
+                faculty: 'Экономика',
+                department: 'Экономической теории',
+                subjects: 'Макроэкономика, Микроэкономика, Финансы',
+                cabinet: 'Д-305',
+                experience: 7,
+                hireDate: '2017-09-01',
+                status: 'Активен'
+            },
+            {
+                id: 7,
+                photo: '👨‍🏫',
+                fullName: 'Иванов Сергей Владимирович',
+                iin: '789012345678',
+                phone: '+7 (701) 777-88-99',
+                email: 'ivanov@uni.kz',
+                degree: 'Кандидат наук',
+                position: 'Доцент',
+                faculty: 'Юриспруденция',
+                department: 'Гражданского права',
+                subjects: 'Гражданское право, Трудовое право, Семейное право',
+                cabinet: 'Е-101',
+                experience: 10,
+                hireDate: '2014-09-01',
+                status: 'Академический отпуск'
+            },
+            {
+                id: 8,
+                photo: '👩‍🏫',
+                fullName: 'Сидорова Мария Павловна',
+                iin: '890123456789',
+                phone: '+7 (701) 888-99-00',
+                email: 'sidorova@uni.kz',
+                degree: 'Старший преподаватель',
+                position: 'Старший преподаватель',
+                faculty: 'Программная инженерия',
+                department: 'Программной инженерии',
+                subjects: 'Java, Python, Алгоритмы, Дискретная математика',
+                cabinet: 'В-304',
+                experience: 5,
+                hireDate: '2019-09-01',
+                status: 'Активен'
+            }
+        ];
+
+        // ============================================================
+        // RENDER TEACHERS TABLE
+        // ============================================================
+        let currentTeachers = [...teachersData];
+
+        function renderTeachers(teachers) {
+            const tbody = document.getElementById('teachersBody');
+            if (!teachers || teachers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 40px;">
+                            <div style="font-size: 48px; color: #c7d2fe;">🧑‍🏫</div>
+                            <p style="color: var(--text-light); margin-top: 8px;">Преподаватели не найдены</p>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('totalTeachers').textContent = '0';
+                return;
+            }
+
+            tbody.innerHTML = teachers.map(t => `
+                <tr data-id="${t.id}">
+                    <td>${t.id}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 28px;">${t.photo}</span>
+                            <div>
+                                <strong>${t.fullName}</strong>
+                                <div style="font-size: 12px; color: var(--text-light);">${t.iin}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-info">${t.department}</span></td>
+                    <td>${t.position}</td>
+                    <td><span class="badge badge-purple">${t.degree}</span></td>
+                    <td>${t.experience} лет</td>
+                    <td>
+                        <div class="action-group">
+                            <button class="btn btn-sm btn-outline" onclick="viewTeacher(${t.id})" title="Просмотр">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="editTeacher(${t.id})" title="Редактировать">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteTeacher(${t.id})" title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('totalTeachers').textContent = teachers.length;
+        }
+
+        // ============================================================
+        // FILTER TABLE
+        // ============================================================
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const department = document.getElementById('departmentFilter').value;
+            const degree = document.getElementById('degreeFilter').value;
+
+            const filtered = teachersData.filter(t => {
+                const matchSearch = t.fullName.toLowerCase().includes(search) ||
+                                   t.department.toLowerCase().includes(search) ||
+                                   t.subjects.toLowerCase().includes(search) ||
+                                   t.iin.includes(search);
+                const matchDept = !department || t.department === department;
+                const matchDegree = !degree || t.degree === degree;
+                return matchSearch && matchDept && matchDegree;
+            });
+
+            currentTeachers = filtered;
+            renderTeachers(filtered);
+        }
+
+        // ============================================================
+        // SORT TABLE
+        // ============================================================
+        let sortAsc = true;
+
+        function sortTable(columnIndex) {
+            const fields = ['id', 'fullName', 'department', 'position', 'degree', 'experience'];
+            const field = fields[columnIndex];
+            if (!field) return;
+
+            currentTeachers.sort((a, b) => {
+                let valA = a[field];
+                let valB = b[field];
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return sortAsc ? -1 : 1;
+                if (valA > valB) return sortAsc ? 1 : -1;
+                return 0;
+            });
+
+            sortAsc = !sortAsc;
+            renderTeachers(currentTeachers);
+        }
+
+        // ============================================================
+        // MODAL
+        // ============================================================
+        function openModal(title, content) {
+            document.getElementById('modalTitle').innerHTML = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ============================================================
+        // VIEW TEACHER (полный профиль)
+        // ============================================================
+        function viewTeacher(id) {
+            const t = teachersData.find(te => te.id === id);
+            if (!t) return;
+
+            const content = `
+                <div class="teacher-profile-header">
+                    <div class="photo">${t.photo}</div>
+                    <div class="info">
+                        <h2>${t.fullName}</h2>
+                        <div class="details">
+                            <span><i class="fas fa-id-badge"></i> ${t.iin}</span>
+                            <span><i class="fas fa-graduation-cap"></i> ${t.degree}</span>
+                            <span><i class="fas fa-user-tie"></i> ${t.position}</span>
+                            <span><i class="fas fa-clock"></i> Стаж: ${t.experience} лет</span>
+                            <span class="badge badge-success">${t.status}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div><label>📞 Телефон</label><input value="${t.phone}" readonly /></div>
+                <div><label>📧 Email</label><input value="${t.email}" readonly /></div>
+                <div><label>🏛️ Факультет</label><input value="${t.faculty}" readonly /></div>
+                <div><label>📋 Кафедра</label><input value="${t.department}" readonly /></div>
+                <div class="full-width"><label>📚 Предметы</label>
+                    <textarea readonly rows="2">${t.subjects}</textarea>
+                </div>
+                <div><label>🚪 Кабинет</label><input value="${t.cabinet}" readonly /></div>
+                <div><label>📅 Дата приема</label><input value="${t.hireDate}" readonly /></div>
+                <div><label>📌 Статус</label><input value="${t.status}" readonly /></div>
+
+                <div class="full-width" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                    <button class="btn btn-sm btn-primary" onclick="showToast('success', 'Расписание преподавателя открыто')">
+                        <i class="fas fa-calendar-alt"></i> Расписание
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="showToast('success', 'Список студентов открыт')">
+                        <i class="fas fa-user-graduate"></i> Студенты
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="exportTeacher(${t.id}, 'pdf')">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="exportTeacher(${t.id}, 'excel')">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="window.print()">
+                        <i class="fas fa-print"></i> Печать
+                    </button>
+                </div>
+            `;
+
+            openModal(`🧑‍🏫 Профиль преподавателя: ${t.fullName}`, content);
+        }
+
+        // ============================================================
+        // EDIT TEACHER
+        // ============================================================
+        function editTeacher(id) {
+            const t = teachersData.find(te => te.id === id);
+            if (!t) return;
+
+            const content = `
+                <div class="full-width"><label>Фото (эмодзи)</label><input value="${t.photo}" /></div>
+                <div class="full-width"><label>ФИО</label><input value="${t.fullName}" /></div>
+                <div><label>ИИН</label><input value="${t.iin}" /></div>
+                <div><label>Телефон</label><input value="${t.phone}" /></div>
+                <div><label>Email</label><input value="${t.email}" /></div>
+                <div><label>Ученая степень</label>
+                    <select>
+                        <option ${t.degree === 'Доктор наук' ? 'selected' : ''}>Доктор наук</option>
+                        <option ${t.degree === 'Кандидат наук' ? 'selected' : ''}>Кандидат наук</option>
+                        <option ${t.degree === 'Профессор' ? 'selected' : ''}>Профессор</option>
+                        <option ${t.degree === 'Доцент' ? 'selected' : ''}>Доцент</option>
+                        <option ${t.degree === 'Старший преподаватель' ? 'selected' : ''}>Старший преподаватель</option>
+                    </select>
+                </div>
+                <div><label>Должность</label>
+                    <select>
+                        <option ${t.position === 'Профессор' ? 'selected' : ''}>Профессор</option>
+                        <option ${t.position === 'Доцент' ? 'selected' : ''}>Доцент</option>
+                        <option ${t.position === 'Старший преподаватель' ? 'selected' : ''}>Старший преподаватель</option>
+                    </select>
+                </div>
+                <div><label>Факультет</label>
+                    <select>
+                        <option ${t.faculty === 'Информационные технологии' ? 'selected' : ''}>Информационные технологии</option>
+                        <option ${t.faculty === 'Математика и технологии' ? 'selected' : ''}>Математика и технологии</option>
+                        <option ${t.faculty === 'Программная инженерия' ? 'selected' : ''}>Программная инженерия</option>
+                        <option ${t.faculty === 'Бизнес-информатика' ? 'selected' : ''}>Бизнес-информатика</option>
+                        <option ${t.faculty === 'Экономика' ? 'selected' : ''}>Экономика</option>
+                        <option ${t.faculty === 'Юриспруденция' ? 'selected' : ''}>Юриспруденция</option>
+                    </select>
+                </div>
+                <div><label>Кафедра</label>
+                    <select>
+                        <option ${t.department === 'Информационных систем' ? 'selected' : ''}>Информационных систем</option>
+                        <option ${t.department === 'Прикладной математики' ? 'selected' : ''}>Прикладной математики</option>
+                        <option ${t.department === 'Программной инженерии' ? 'selected' : ''}>Программной инженерии</option>
+                        <option ${t.department === 'Бизнес-аналитики' ? 'selected' : ''}>Бизнес-аналитики</option>
+                        <option ${t.department === 'Экономической теории' ? 'selected' : ''}>Экономической теории</option>
+                        <option ${t.department === 'Гражданского права' ? 'selected' : ''}>Гражданского права</option>
+                    </select>
+                </div>
+                <div class="full-width"><label>Предметы</label>
+                    <textarea rows="2">${t.subjects}</textarea>
+                </div>
+                <div><label>Кабинет</label><input value="${t.cabinet}" /></div>
+                <div><label>Стаж (лет)</label><input type="number" value="${t.experience}" /></div>
+                <div><label>Дата приема</label><input type="date" value="${t.hireDate}" /></div>
+                <div><label>Статус</label>
+                    <select>
+                        <option ${t.status === 'Активен' ? 'selected' : ''}>Активен</option>
+                        <option ${t.status === 'Академический отпуск' ? 'selected' : ''}>Академический отпуск</option>
+                        <option ${t.status === 'На пенсии' ? 'selected' : ''}>На пенсии</option>
+                    </select>
+                </div>
+            `;
+
+            openModal(`✏️ Редактирование: ${t.fullName}`, content);
+        }
+
+        // ============================================================
+        // DELETE TEACHER
+        // ============================================================
+        function deleteTeacher(id) {
+            if (confirm('Вы уверены, что хотите удалить этого преподавателя?')) {
+                const index = teachersData.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    teachersData.splice(index, 1);
+                    filterTable();
+                    showToast('success', 'Преподаватель удален');
+                }
+            }
+        }
+
+        // ============================================================
+        // CREATE TEACHER FORM
+        // ============================================================
+        function showCreateForm() {
+            const content = `
+                <div class="full-width"><label>Фото (эмодзи)</label><input placeholder="👨‍🏫 или 👩‍🏫" /></div>
+                <div class="full-width"><label>ФИО *</label><input placeholder="Смирнов Андрей Петрович" /></div>
+                <div><label>ИИН</label><input placeholder="12 цифр" /></div>
+                <div><label>Телефон</label><input placeholder="+7 (701) 111-22-33" /></div>
+                <div><label>Email</label><input placeholder="email@uni.kz" /></div>
+                <div><label>Ученая степень</label>
+                    <select>
+                        <option>Доктор наук</option>
+                        <option>Кандидат наук</option>
+                        <option>Профессор</option>
+                        <option>Доцент</option>
+                        <option>Старший преподаватель</option>
+                    </select>
+                </div>
+                <div><label>Должность</label>
+                    <select>
+                        <option>Профессор</option>
+                        <option>Доцент</option>
+                        <option>Старший преподаватель</option>
+                    </select>
+                </div>
+                <div><label>Факультет</label>
+                    <select>
+                        <option>Информационные технологии</option>
+                        <option>Математика и технологии</option>
+                        <option>Программная инженерия</option>
+                        <option>Бизнес-информатика</option>
+                        <option>Экономика</option>
+                        <option>Юриспруденция</option>
+                    </select>
+                </div>
+                <div><label>Кафедра</label>
+                    <select>
+                        <option>Информационных систем</option>
+                        <option>Прикладной математики</option>
+                        <option>Программной инженерии</option>
+                        <option>Бизнес-аналитики</option>
+                        <option>Экономической теории</option>
+                        <option>Гражданского права</option>
+                    </select>
+                </div>
+                <div class="full-width"><label>Предметы</label>
+                    <textarea rows="2" placeholder="Базы данных, Программирование, Алгоритмы"></textarea>
+                </div>
+                <div><label>Кабинет</label><input placeholder="А-301" /></div>
+                <div><label>Стаж (лет)</label><input type="number" value="1" /></div>
+                <div><label>Дата приема</label><input type="date" /></div>
+                <div><label>Статус</label>
+                    <select>
+                        <option>Активен</option>
+                        <option>Академический отпуск</option>
+                        <option>На пенсии</option>
+                    </select>
+                </div>
+            `;
+
+            openModal('➕ Добавление нового преподавателя', content);
+        }
+
+        // ============================================================
+        // EXPORT
+        // ============================================================
+        function exportData(type) {
+            const count = currentTeachers.length;
+            showToast('success', `📊 Экспорт ${type.toUpperCase()} (${count} преподавателей) начат`);
+        }
+
+        function exportTeacher(id, type) {
+            const t = teachersData.find(te => te.id === id);
+            if (!t) return;
+            showToast('success', `📊 Экспорт ${type.toUpperCase()} для ${t.fullName} начат`);
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        renderTeachers(teachersData);
+        console.log('✅ Страница преподавателей загружена');
+        console.log(`🧑‍🏫 Всего преподавателей: ${teachersData.length}`);
+    </script>
+</body>
+</html>

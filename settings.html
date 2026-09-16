@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Настройки | University Management System</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --primary-bg: #eef2ff;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-light: #475569;
+            --white: #ffffff;
+            --shadow: 0 20px 60px rgba(0,0,0,0.08);
+            --shadow-hover: 0 30px 80px rgba(79,70,229,0.15);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================================
+           ANIMATIONS
+           ============================================================ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
+        .animate-fadeIn { animation: fadeIn 0.6s ease forwards; }
+        .animate-slideInLeft { animation: slideInLeft 0.8s ease forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        /* ============================================================
+           HERO / BACKGROUND
+           ============================================================ */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(79,70,229,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(79,70,229,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+        }
+
+        /* ============================================================
+           CONTAINER
+           ============================================================ */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+           TOPBAR
+           ============================================================ */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 24px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: transparent;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-left .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text);
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .topbar-left .mobile-toggle:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .topbar-left .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .topbar-left .logo i {
+            font-size: 28px;
+            color: var(--primary);
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(79,70,229,0.1);
+        }
+
+        .topbar-left .logo span { color: var(--text); }
+        .topbar-left .logo small { 
+            font-size: 13px; 
+            font-weight: 400; 
+            color: var(--text-light);
+            margin-left: 4px;
+        }
+
+        .topbar-left h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .topbar-left h1 small {
+            font-weight: 400;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-left: 8px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-right .icon-btn {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .topbar-right .icon-btn:hover {
+            background: var(--white);
+            color: var(--text);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .topbar-right .icon-btn .dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+        }
+
+        .topbar-right .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .topbar-right .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(79,70,229,0.3);
+        }
+
+        /* ============================================================
+           BREADCRUMB
+           ============================================================ */
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: inline-flex;
+        }
+
+        .breadcrumb span {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* ============================================================
+           SETTINGS LAYOUT
+           ============================================================ */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+        }
+
+        /* ============================================================
+           SETTINGS SIDEBAR
+           ============================================================ */
+        .settings-sidebar {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            padding: 20px 0;
+            height: fit-content;
+        }
+
+        .settings-sidebar .sidebar-title {
+            padding: 0 20px 16px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        .settings-sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .settings-sidebar .menu-item:hover {
+            background: rgba(79,70,229,0.05);
+            color: var(--text);
+        }
+
+        .settings-sidebar .menu-item.active {
+            background: var(--primary-bg);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .settings-sidebar .menu-item i {
+            width: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .settings-sidebar .menu-item .badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: var(--white);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 50px;
+        }
+
+        /* ============================================================
+           SETTINGS CONTENT
+           ============================================================ */
+        .settings-content {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            padding: 32px 36px;
+        }
+
+        .settings-content .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .settings-content .section-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* ============================================================
+           SETTINGS SECTIONS
+           ============================================================ */
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        /* ============================================================
+           FORM
+           ============================================================ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 12px 16px 12px 46px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            transition: var(--transition);
+            color: var(--text);
+            appearance: none;
+        }
+
+        .input-wrapper select {
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        .input-wrapper .select-arrow {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79,70,229,0.08);
+        }
+
+        .input-wrapper input:focus + .icon,
+        .input-wrapper select:focus + .icon {
+            color: var(--primary);
+        }
+
+        .input-wrapper input::placeholder {
+            color: #94a3b8;
+        }
+
+        .input-wrapper .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            transition: var(--transition);
+        }
+
+        .input-wrapper .toggle-password:hover {
+            color: var(--text);
+        }
+
+        /* ============================================================
+           TOGGLE SWITCH
+           ============================================================ */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-row .info strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .toggle-row .info span {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .toggle {
+            width: 48px;
+            height: 28px;
+            background: #cbd5e1;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: var(--white);
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toggle.active::after {
+            left: 23px;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79,70,229,0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(34,197,94,0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34,197,94,0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(239,68,68,0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ============================================================
+           PROFILE AVATAR
+           ============================================================ */
+        .profile-avatar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar .avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 32px;
+            box-shadow: 0 8px 24px rgba(79,70,229,0.2);
+        }
+
+        .profile-avatar .info h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .profile-avatar .info p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* ============================================================
+           LANGUAGE SELECTOR
+           ============================================================ */
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .lang-btn {
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .lang-btn:hover {
+            border-color: var(--primary-light);
+            background: var(--primary-bg);
+        }
+
+        .lang-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+            color: var(--primary);
+        }
+
+        .lang-btn .flag {
+            display: block;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 420px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast.info { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+
+        .toast i { font-size: 20px; }
+
+        /* ============================================================
+           NAVIGATION LINKS
+           ============================================================ */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(226, 232, 240, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(79,70,229,0.06);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a i { font-size: 14px; }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1024px) {
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+            .settings-sidebar {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                padding: 12px;
+            }
+            .settings-sidebar .sidebar-title {
+                display: none;
+            }
+            .settings-sidebar .menu-item {
+                padding: 10px 14px;
+                border-left: none;
+                border-bottom: 2px solid transparent;
+                justify-content: center;
+                font-size: 12px;
+            }
+            .settings-sidebar .menu-item.active {
+                border-bottom-color: var(--primary);
+                border-left: none;
+            }
+            .settings-sidebar .menu-item .badge {
+                display: none;
+            }
+            .language-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 12px; }
+            
+            .topbar-left .mobile-toggle {
+                display: block;
+            }
+
+            .topbar-left .logo span,
+            .topbar-left .logo small {
+                display: none;
+            }
+
+            .topbar-left h1 small {
+                display: none;
+            }
+
+            .settings-content {
+                padding: 20px 16px;
+            }
+
+            .profile-avatar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .language-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .settings-sidebar {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .settings-sidebar .menu-item {
+                font-size: 10px;
+                padding: 8px 6px;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .settings-sidebar .menu-item i {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-left h1 {
+                font-size: 18px;
+            }
+
+            .topbar-right .icon-btn {
+                padding: 6px 8px;
+                font-size: 16px;
+            }
+
+            .settings-sidebar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .language-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toggle-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Успешно!</span>
+    </div>
+
+    <!-- ============================================================
+    HERO / MAIN
+    ============================================================ -->
+    <div class="hero">
+        <div class="grid-bg"></div>
+
+        <div class="container">
+            
+            <!-- ============================================================
+            TOPBAR
+            ============================================================ -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <a href="index.html" class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>UniSystem <small>v4.0</small></span>
+                    </a>
+                    <h1>
+                        Настройки
+                        <small>Управление параметрами системы</small>
+                    </h1>
+                </div>
+                <div class="topbar-right">
+                    <button class="icon-btn" title="Поиск">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" title="Уведомления">
+                        <i class="fas fa-bell"></i>
+                        <span class="dot"></span>
+                    </button>
+                    <button class="icon-btn" title="Тема" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="avatar" id="userAvatar" title="Профиль">АИ</div>
+                </div>
+            </header>
+
+            <!-- ============================================================
+            BREADCRUMB
+            ============================================================ -->
+            <div class="breadcrumb">
+                <i class="fas fa-home"></i> / <a href="dashboard.html" style="color: var(--text-light); text-decoration: none;">Панель управления</a> / <span>Настройки</span>
+            </div>
+
+            <!-- ============================================================
+            SETTINGS LAYOUT
+            ============================================================ -->
+            <div class="settings-layout">
+                
+                <!-- ============================================================
+                SETTINGS SIDEBAR
+                ============================================================ -->
+                <aside class="settings-sidebar">
+                    <div class="sidebar-title">Меню настроек</div>
+                    
+                    <div class="menu-item active" data-section="profile" onclick="showSection('profile')">
+                        <i class="fas fa-user"></i> Личные данные
+                    </div>
+                    <div class="menu-item" data-section="security" onclick="showSection('security')">
+                        <i class="fas fa-shield-alt"></i> Безопасность
+                    </div>
+                    <div class="menu-item" data-section="appearance" onclick="showSection('appearance')">
+                        <i class="fas fa-palette"></i> Внешний вид
+                    </div>
+                    <div class="menu-item" data-section="language" onclick="showSection('language')">
+                        <i class="fas fa-language"></i> Язык
+                    </div>
+                    <div class="menu-item" data-section="notifications" onclick="showSection('notifications')">
+                        <i class="fas fa-bell"></i> Уведомления
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="menu-item" data-section="interface" onclick="showSection('interface')">
+                        <i class="fas fa-desktop"></i> Интерфейс
+                    </div>
+                    <div class="menu-item" data-section="system" onclick="showSection('system')">
+                        <i class="fas fa-info-circle"></i> О системе
+                    </div>
+                </aside>
+
+                <!-- ============================================================
+                SETTINGS CONTENT
+                ============================================================ -->
+                <div class="settings-content">
+
+                    <!-- ============================================================
+                    SECTION: PROFILE
+                    ============================================================ -->
+                    <div class="settings-section active" id="section-profile">
+                        <h2 class="section-title">Личные данные</h2>
+                        <p class="section-subtitle">Управление вашей личной информацией</p>
+
+                        <div class="profile-avatar">
+                            <div class="avatar-large" id="profileAvatar">АИ</div>
+                            <div class="info">
+                                <h3 id="profileName">Алексей Иванов</h3>
+                                <p id="profileEmail">alexey@uni.ru</p>
+                                <button class="btn btn-sm btn-outline" onclick="showToast('info', 'Загрузка нового фото...')">
+                                    <i class="fas fa-camera"></i> Изменить фото
+                                </button>
+                            </div>
+                        </div>
+
+                        <form onsubmit="saveProfile(event)">
+                            <div class="form-group">
+                                <label>ФИО <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="fullName" value="Алексей Иванов" placeholder="Иванов Иван Иванович" required />
+                                    <i class="fas fa-user icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="email" id="email" value="alexey@uni.ru" placeholder="your@email.com" required />
+                                    <i class="fas fa-envelope icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Телефон</label>
+                                <div class="input-wrapper">
+                                    <input type="tel" id="phone" value="+7 701 123 4567" placeholder="+7 701 123 4567" />
+                                    <i class="fas fa-phone icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Должность / Роль</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="role" value="Администратор" disabled style="opacity:0.7; cursor:not-allowed;" />
+                                    <i class="fas fa-user-tag icon"></i>
+                                </div>
+                                <div class="hint">Роль можно изменить в разделе Администрирование</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Сохранить изменения
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- ============================================================
+                    SECTION: SECURITY
+                    ============================================================ -->
+                    <div class="settings-section" id="section-security">
+                        <h2 class="section-title">Безопасность</h2>
+                        <p class="section-subtitle">Управление паролем и настройками безопасности</p>
+
+                        <form onsubmit="changePassword(event)">
+                            <div class="form-group">
+                                <label>Текущий пароль <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="currentPassword" placeholder="Введите текущий пароль" required />
+                                    <i class="fas fa-lock icon"></i>
+                                    <button type="button" class="toggle-password" onclick="togglePassword('currentPassword', 'currentIcon')">
+                                        <i class="fas fa-eye" id="currentIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Новый пароль <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="newPassword" placeholder="Минимум 8 символов" required minlength="8" />
+                                    <i class="fas fa-key icon"></i>
+                                    <button type="button" class="toggle-password" onclick="togglePassword('newPassword', 'newIcon')">
+                                        <i class="fas fa-eye" id="newIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="hint">Пароль должен содержать минимум 8 символов, буквы и цифры</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Подтвердите новый пароль <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="confirmPassword" placeholder="Повторите новый пароль" required />
+                                    <i class="fas fa-check-circle icon"></i>
+                                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', 'confirmIcon')">
+                                        <i class="fas fa-eye" id="confirmIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="toggle-row">
+                                <div class="info">
+                                    <strong>Двухфакторная аутентификация</strong>
+                                    <span>Дополнительный уровень безопасности</span>
+                                </div>
+                                <div class="toggle" id="twoFactorToggle" onclick="toggleSwitch('twoFactorToggle')"></div>
+                            </div>
+
+                            <div class="toggle-row">
+                                <div class="info">
+                                    <strong>Уведомления о входе</strong>
+                                    <span>Получать уведомления при входе с новых устройств</span>
+                                </div>
+                                <div class="toggle active" id="loginNotifyToggle" onclick="toggleSwitch('loginNotifyToggle')"></div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="margin-top:16px;">
+                                <i class="fas fa-save"></i> Сменить пароль
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- ============================================================
+                    SECTION: APPEARANCE
+                    ============================================================ -->
+                    <div class="settings-section" id="section-appearance">
+                        <h2 class="section-title">Внешний вид</h2>
+                        <p class="section-subtitle">Настройка темы и визуального оформления</p>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>Тёмная тема</strong>
+                                <span>Включить тёмную тему интерфейса</span>
+                            </div>
+                            <div class="toggle" id="darkThemeToggle" onclick="toggleSwitch('darkThemeToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>Компактный режим</strong>
+                                <span>Уменьшить отступы и размеры элементов</span>
+                            </div>
+                            <div class="toggle" id="compactToggle" onclick="toggleSwitch('compactToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>Анимации</strong>
+                                <span>Включить плавные анимации интерфейса</span>
+                            </div>
+                            <div class="toggle active" id="animationsToggle" onclick="toggleSwitch('animationsToggle')"></div>
+                        </div>
+
+                        <div style="margin-top:16px;">
+                            <label style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">Цветовая схема</label>
+                            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                                <button class="btn btn-primary" style="background:#4f46e5; width:44px; height:44px; border-radius:50%; padding:0;" onclick="showToast('info', 'Цветовая схема изменена')"></button>
+                                <button class="btn btn-primary" style="background:#0891b2; width:44px; height:44px; border-radius:50%; padding:0;" onclick="showToast('info', 'Цветовая схема изменена')"></button>
+                                <button class="btn btn-primary" style="background:#059669; width:44px; height:44px; border-radius:50%; padding:0;" onclick="showToast('info', 'Цветовая схема изменена')"></button>
+                                <button class="btn btn-primary" style="background:#7c3aed; width:44px; height:44px; border-radius:50%; padding:0;" onclick="showToast('info', 'Цветовая схема изменена')"></button>
+                                <button class="btn btn-primary" style="background:#db2777; width:44px; height:44px; border-radius:50%; padding:0;" onclick="showToast('info', 'Цветовая схема изменена')"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================
+                    SECTION: LANGUAGE
+                    ============================================================ -->
+                    <div class="settings-section" id="section-language">
+                        <h2 class="section-title">Язык</h2>
+                        <p class="section-subtitle">Выберите язык интерфейса</p>
+
+                        <div class="language-grid">
+                            <button class="lang-btn active" onclick="selectLanguage(this, 'ru')">
+                                <span class="flag">🇷🇺</span>
+                                Русский
+                            </button>
+                            <button class="lang-btn" onclick="selectLanguage(this, 'kk')">
+                                <span class="flag">🇰🇿</span>
+                                Қазақша
+                            </button>
+                            <button class="lang-btn" onclick="selectLanguage(this, 'en')">
+                                <span class="flag">🇬🇧</span>
+                                English
+                            </button>
+                        </div>
+
+                        <div style="margin-top:20px; padding:16px; background:var(--primary-bg); border-radius:12px; border:1px solid rgba(79,70,229,0.15);">
+                            <p style="font-size:13px; color:var(--text-light);">
+                                <i class="fas fa-info-circle" style="color:var(--primary);"></i>
+                                Для применения языка требуется перезагрузка страницы
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================
+                    SECTION: NOTIFICATIONS
+                    ============================================================ -->
+                    <div class="settings-section" id="section-notifications">
+                        <h2 class="section-title">Уведомления</h2>
+                        <p class="section-subtitle">Настройка системы уведомлений</p>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>📧 Email уведомления</strong>
+                                <span>Получать уведомления на email</span>
+                            </div>
+                            <div class="toggle active" id="emailNotifyToggle" onclick="toggleSwitch('emailNotifyToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>📱 Push-уведомления</strong>
+                                <span>Браузерные уведомления</span>
+                            </div>
+                            <div class="toggle active" id="pushNotifyToggle" onclick="toggleSwitch('pushNotifyToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>📅 Напоминания об экзаменах</strong>
+                                <span>Уведомления за 3 дня до экзамена</span>
+                            </div>
+                            <div class="toggle active" id="examNotifyToggle" onclick="toggleSwitch('examNotifyToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>💳 Уведомления об оплате</strong>
+                                <span>Напоминания о предстоящих платежах</span>
+                            </div>
+                            <div class="toggle active" id="paymentNotifyToggle" onclick="toggleSwitch('paymentNotifyToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>📚 Библиотека</strong>
+                                <span>Уведомления о возврате книг</span>
+                            </div>
+                            <div class="toggle" id="libraryNotifyToggle" onclick="toggleSwitch('libraryNotifyToggle')"></div>
+                        </div>
+
+                        <button class="btn btn-success" style="margin-top:16px;" onclick="saveNotificationSettings()">
+                            <i class="fas fa-save"></i> Сохранить настройки
+                        </button>
+                    </div>
+
+                    <!-- ============================================================
+                    SECTION: INTERFACE
+                    ============================================================ -->
+                    <div class="settings-section" id="section-interface">
+                        <h2 class="section-title">Настройки интерфейса</h2>
+                        <p class="section-subtitle">Персонализация пользовательского интерфейса</p>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>Показывать хлебные крошки</strong>
+                                <span>Навигационные подсказки вверху страницы</span>
+                            </div>
+                            <div class="toggle active" id="breadcrumbToggle" onclick="toggleSwitch('breadcrumbToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>Показывать уведомления</strong>
+                                <span>Всплывающие уведомления в правом верхнем углу</span>
+                            </div>
+                            <div class="toggle active" id="notificationsUIToggle" onclick="toggleSwitch('notificationsUIToggle')"></div>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="info">
+                                <strong>Включить боковую панель</strong>
+                                <span>Закреплённая панель навигации</span>
+                            </div>
+                            <div class="toggle active" id="sidebarToggle" onclick="toggleSwitch('sidebarToggle')"></div>
+                        </div>
+
+                        <div class="form-group" style="margin-top:16px;">
+                            <label>Количество элементов на странице</label>
+                            <select class="form-control" style="width:auto; padding:8px 16px;" onchange="showToast('info', 'Настройка сохранена')">
+                                <option>10</option>
+                                <option selected>25</option>
+                                <option>50</option>
+                                <option>100</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="showToast('success', 'Настройки интерфейса сохранены')">
+                            <i class="fas fa-save"></i> Сохранить
+                        </button>
+                    </div>
+
+                    <!-- ============================================================
+                    SECTION: SYSTEM
+                    ============================================================ -->
+                    <div class="settings-section" id="section-system">
+                        <h2 class="section-title">О системе</h2>
+                        <p class="section-subtitle">Информация о системе и версии</p>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+                            <div style="padding:16px; background:var(--primary-bg); border-radius:12px; border:1px solid rgba(79,70,229,0.1);">
+                                <div style="font-size:12px; color:var(--text-light);">Версия</div>
+                                <div style="font-size:24px; font-weight:700; color:var(--primary);">v4.0.0</div>
+                            </div>
+                            <div style="padding:16px; background:var(--primary-bg); border-radius:12px; border:1px solid rgba(79,70,229,0.1);">
+                                <div style="font-size:12px; color:var(--text-light);">Последнее обновление</div>
+                                <div style="font-size:24px; font-weight:700; color:var(--primary);">29.05.2026</div>
+                            </div>
+                            <div style="padding:16px; background:var(--primary-bg); border-radius:12px; border:1px solid rgba(79,70,229,0.1);">
+                                <div style="font-size:12px; color:var(--text-light);">Платформа</div>
+                                <div style="font-size:24px; font-weight:700; color:var(--primary);">React + TypeScript</div>
+                            </div>
+                            <div style="padding:16px; background:var(--primary-bg); border-radius:12px; border:1px solid rgba(79,70,229,0.1);">
+                                <div style="font-size:12px; color:var(--text-light);">Лицензия</div>
+                                <div style="font-size:24px; font-weight:700; color:var(--primary);">MIT</div>
+                            </div>
+                        </div>
+
+                        <div style="padding:16px; background:rgba(255,255,255,0.3); border-radius:12px; border:1px solid rgba(226,232,240,0.3);">
+                            <p style="font-size:13px; color:var(--text-light); line-height:1.6;">
+                                <strong>University Management System (UMS)</strong> — современная система управления 
+                                образовательным процессом. Разработана с использованием React, TypeScript, 
+                                Redux Toolkit и Tailwind CSS.
+                            </p>
+                            <div style="display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;">
+                                <button class="btn btn-sm btn-outline" onclick="showToast('info', 'Проверка обновлений...')">
+                                    <i class="fas fa-sync-alt"></i> Проверить обновления
+                                </button>
+                                <button class="btn btn-sm btn-outline" onclick="showToast('info', 'Создание отчета о системе...')">
+                                    <i class="fas fa-file-alt"></i> Отчет о системе
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ============================================================
+            NAVIGATION LINKS
+            ============================================================ -->
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                <a href="students.html"><i class="fas fa-user-graduate"></i> Студенты</a>
+                <a href="teachers.html"><i class="fas fa-chalkboard-teacher"></i> Преподаватели</a>
+                <a href="groups.html"><i class="fas fa-users"></i> Группы</a>
+                
+                <a href="grades.html"><i class="fas fa-chart-line"></i> Оценки</a>
+                <a href="schedule.html"><i class="fas fa-calendar-alt"></i> Расписание</a>
+                <a href="library.html"><i class="fas fa-book"></i> Библиотека</a>
+                <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+                
+                <a href="#" onclick="logout(event)" style="color: #ef4444;">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        /**
+         * ============================================================
+         * UNIVERSITY MANAGEMENT SYSTEM - SETTINGS PAGE
+         * ============================================================
+         * 
+         * Полная логика страницы настроек:
+         * - Навигация по разделам
+         * - Переключение тем
+         * - Сохранение данных
+         * - Управление уведомлениями
+         * - Выбор языка
+         */
+
+        // ============================================================
+        // DOM REFS
+        // ============================================================
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // ============================================================
+        // CHECK AUTHENTICATION
+        // ============================================================
+        (function checkAuth() {
+            const isAuth = localStorage.getItem('isAuthenticated');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+            if (isAuth !== 'true' || !user.email) {
+                showToast('error', 'Пожалуйста, войдите в систему');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return;
+            }
+
+            // Обновляем информацию о пользователе
+            const name = user.name || 'Пользователь';
+            const email = user.email || 'user@uni.ru';
+            const role = user.role || 'Студент';
+            
+            // Обновляем аватар
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.querySelector('.avatar').textContent = initials || 'АИ';
+            document.getElementById('profileAvatar').textContent = initials || 'АИ';
+            
+            // Обновляем профиль
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('fullName').value = name;
+            document.getElementById('email').value = email;
+            
+            const roleNames = {
+                student: 'Студент',
+                teacher: 'Преподаватель',
+                admin: 'Администратор',
+                manager: 'Менеджер',
+                developer: 'Разработчик',
+                accountant: 'Бухгалтер'
+            };
+            document.getElementById('role').value = roleNames[role] || role;
+        })();
+
+        // ============================================================
+        // SECTION NAVIGATION
+        // ============================================================
+        function showSection(section) {
+            // Скрываем все секции
+            document.querySelectorAll('.settings-section').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Показываем выбранную секцию
+            const target = document.getElementById('section-' + section);
+            if (target) target.classList.add('active');
+
+            // Обновляем активный пункт меню
+            document.querySelectorAll('.settings-sidebar .menu-item').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.section === section) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        // ============================================================
+        // TOGGLE SWITCH
+        // ============================================================
+        function toggleSwitch(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('active');
+                const isActive = el.classList.contains('active');
+                const label = el.closest('.toggle-row')?.querySelector('.info strong')?.textContent || 'Настройка';
+                showToast('success', `${label} ${isActive ? 'включена' : 'отключена'}`);
+            }
+        }
+
+        // ============================================================
+        // LANGUAGE SELECTOR
+        // ============================================================
+        function selectLanguage(el, lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+            
+            const langNames = {
+                ru: 'Русский',
+                kk: 'Қазақша',
+                en: 'English'
+            };
+            showToast('success', `Язык изменен на ${langNames[lang]}`);
+            
+            // Сохраняем выбор языка
+            localStorage.setItem('language', lang);
+        }
+
+        // ============================================================
+        // TOGGLE PASSWORD VISIBILITY
+        // ============================================================
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // ============================================================
+        // SAVE PROFILE
+        // ============================================================
+        function saveProfile(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!name || !email) {
+                showToast('error', 'Пожалуйста, заполните обязательные поля');
+                return;
+            }
+
+            // Обновляем данные пользователя
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            user.name = name;
+            user.email = email;
+            user.phone = phone;
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // Обновляем отображение
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('profileEmail').textContent = email;
+            
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.querySelector('.avatar').textContent = initials;
+            document.getElementById('profileAvatar').textContent = initials;
+
+            showToast('success', 'Личные данные сохранены успешно!');
+        }
+
+        // ============================================================
+        // CHANGE PASSWORD
+        // ============================================================
+        function changePassword(e) {
+            e.preventDefault();
+
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (!current || !newPass || !confirm) {
+                showToast('error', 'Пожалуйста, заполните все поля');
+                return;
+            }
+
+            if (newPass.length < 8) {
+                showToast('error', 'Новый пароль должен содержать минимум 8 символов');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                showToast('error', 'Пароли не совпадают');
+                return;
+            }
+
+            // Имитация смены пароля
+            showToast('success', 'Пароль успешно изменен!');
+            
+            // Очищаем поля
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        // ============================================================
+        // SAVE NOTIFICATION SETTINGS
+        // ============================================================
+        function saveNotificationSettings() {
+            showToast('success', 'Настройки уведомлений сохранены!');
+        }
+
+        // ============================================================
+        // TOGGLE THEME (DEMO)
+        // ============================================================
+        function toggleTheme() {
+            const isDark = document.documentElement.style.getPropertyValue('--bg') === '#0f172a';
+            if (isDark) {
+                document.documentElement.style.setProperty('--bg', '#f8fafc');
+                document.documentElement.style.setProperty('--text', '#0f172a');
+                document.documentElement.style.setProperty('--text-light', '#475569');
+                showToast('info', 'Светлая тема включена');
+            } else {
+                document.documentElement.style.setProperty('--bg', '#0f172a');
+                document.documentElement.style.setProperty('--text', '#e2e8f0');
+                document.documentElement.style.setProperty('--text-light', '#94a3b8');
+                showToast('info', 'Тёмная тема включена');
+            }
+        }
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function logout(e) {
+            e.preventDefault();
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('user');
+                localStorage.removeItem('userRole');
+                showToast('info', 'Вы вышли из системы');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 800);
+            }
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(type, message) {
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+
+            toast.className = 'toast';
+            toast.classList.add(type);
+            toast.querySelector('i').className = `fas ${icons[type] || icons.info}`;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============================================================
+        // MOBILE TOGGLE
+        // ============================================================
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            // Для мобильной версии показываем боковое меню
+            showToast('info', 'Открыть меню навигации');
+        });
+
+        console.log('⚙️ Страница настроек загружена');
+        console.log('📌 Все разделы доступны');
+        console.log('🌙 Поддерживается смена темы');
+        console.log('🔗 Ссылки: index.html, dashboard.html, profile.html');
+    </script>
+
+</body>
+</html>

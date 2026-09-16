@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Студенты | University Management System</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --primary-bg: #eef2ff;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-light: #475569;
+            --white: #ffffff;
+            --shadow: 0 20px 60px rgba(0,0,0,0.08);
+            --shadow-hover: 0 30px 80px rgba(79,70,229,0.15);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
+        .animate-fadeIn { animation: fadeIn 0.6s ease forwards; }
+        .animate-slideInLeft { animation: slideInLeft 0.8s ease forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(79,70,229,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(79,70,229,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 24px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: transparent;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-left .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .topbar-left .logo i {
+            font-size: 28px;
+            color: var(--primary);
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(79,70,229,0.1);
+        }
+
+        .topbar-left .logo span { color: var(--text); }
+        .topbar-left .logo small { 
+            font-size: 13px; 
+            font-weight: 400; 
+            color: var(--text-light);
+            margin-left: 4px;
+        }
+
+        .topbar-left h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .topbar-left h1 small {
+            font-weight: 400;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-left: 8px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-right .icon-btn {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .topbar-right .icon-btn:hover {
+            background: var(--white);
+            color: var(--text);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .topbar-right .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .topbar-right .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(79,70,229,0.3);
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: inline-flex;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h2 i {
+            color: var(--primary);
+        }
+
+        .page-header .stats-badge {
+            font-size: 14px;
+            color: var(--text-light);
+            background: rgba(255,255,255,0.6);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* SEARCH & FILTERS */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 18px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+            background: rgba(255,255,255,0.9);
+        }
+
+        .search-bar select {
+            padding: 12px 18px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .search-bar select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        /* CARD */
+        .card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            background: rgba(255,255,255,0.85);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h3 i {
+            color: var(--primary);
+        }
+
+        .card-header .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table thead th {
+            text-align: left;
+            padding: 12px 12px 12px 0;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 2px solid rgba(226, 232, 240, 0.5);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        table thead th:hover {
+            color: var(--primary);
+        }
+
+        table tbody td {
+            padding: 12px 12px 12px 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        table tbody tr:hover {
+            background: rgba(79,70,229,0.04);
+            border-radius: 8px;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-neutral { background: #e2e8f0; color: #475569; }
+        .badge-purple { background: #ede9fe; color: #7c3aed; }
+        .badge-pink { background: #fce7f3; color: #db2777; }
+        .badge-teal { background: #ccfbf1; color: #0d9488; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79,70,229,0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(34,197,94,0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34,197,94,0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(239,68,68,0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .btn-xs {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        .btn-icon {
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+
+        /* ACTION BUTTONS GROUP */
+        .action-group {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .action-group .btn {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* NAVIGATION LINKS */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(226, 232, 240, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(79,70,229,0.06);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            background: rgba(79,70,229,0.1);
+        }
+
+        .nav-links a i { font-size: 14px; }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 420px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast.info { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+        .toast.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .toast i { font-size: 20px; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .modal-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .modal-header .close-btn:hover {
+            background: rgba(239,68,68,0.1);
+            color: #ef4444;
+        }
+
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .modal-body .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .modal-body label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .modal-body input,
+        .modal-body select,
+        .modal-body textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+            background: var(--bg);
+        }
+
+        .modal-body input:focus,
+        .modal-body select:focus,
+        .modal-body textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .modal-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 12px; }
+            
+            .topbar-left .logo span,
+            .topbar-left .logo small {
+                display: none;
+            }
+
+            .topbar-left h1 small {
+                display: none;
+            }
+
+            .page-header h2 {
+                font-size: 22px;
+            }
+
+            .search-bar input {
+                min-width: 100%;
+            }
+
+            .search-bar select {
+                width: 100%;
+            }
+
+            .card {
+                padding: 18px 16px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .modal {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .action-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-left h1 {
+                font-size: 18px;
+            }
+
+            .topbar-right .icon-btn {
+                padding: 6px 8px;
+                font-size: 16px;
+            }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Успешно!</span>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-user-graduate"></i> Карточка студента</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Заполняется динамически -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Закрыть</button>
+                <button class="btn btn-primary" onclick="showToast('success', 'Данные сохранены')">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="grid-bg"></div>
+
+        <div class="container">
+            
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <a href="index.html" class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>UniSystem <small>v4.0</small></span>
+                    </a>
+                    <h1>
+                        Студенты
+                        <small>Управление студентами</small>
+                    </h1>
+
+                 
+
+                </div>
+                <div class="topbar-right">
+                    <button class="icon-btn" title="Поиск" onclick="document.getElementById('searchInput').focus()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" title="Уведомления" onclick="showToast('info', 'Нет новых уведомлений')">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="icon-btn" title="Тема" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="avatar" id="userAvatar" title="Профиль">АИ</div>
+                </div>
+            </header>
+
+            <!-- BREADCRUMB -->
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+               
+                <a href="teachers.html"><i class="fas fa-chalkboard-teacher"></i> Преподаватели</a>
+                <a href="groups.html"><i class="fas fa-users"></i> Группы</a>
+                
+                <a href="grades.html"><i class="fas fa-chart-line"></i> Оценки</a>
+                <a href="schedule.html"><i class="fas fa-calendar-alt"></i> Расписание</a>
+                <a href="library.html"><i class="fas fa-book"></i> Библиотека</a>
+                <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+                
+                
+            </div>
+            <br>
+            <br>
+
+
+            <!-- PAGE HEADER -->
+            <div class="page-header animate-fadeInUp">
+                <h2>
+                    <i class="fas fa-user-graduate"></i>
+                    Список студентов
+                </h2>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <span class="stats-badge">
+                        <i class="fas fa-users"></i> Всего: <strong id="totalStudents">12</strong>
+                    </span>
+                    <button class="btn btn-primary btn-sm" onclick="showCreateForm()">
+                        <i class="fas fa-user-plus"></i> Добавить
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTERS -->
+            <div class="search-bar animate-fadeInUp" style="animation-delay:0.05s;">
+                <input type="text" id="searchInput" placeholder="🔍 Поиск по ФИО, группе, факультету, ИИН..." oninput="filterTable()" />
+                <select id="groupFilter" onchange="filterTable()">
+                    <option value="">Все группы</option>
+                    <option value="ИС-41">ИС-41</option>
+                    <option value="БД-32">БД-32</option>
+                    <option value="ПИ-23">ПИ-23</option>
+                    <option value="ЭК-21">ЭК-21</option>
+                    <option value="ЮР-11">ЮР-11</option>
+                    <option value="МТ-31">МТ-31</option>
+                </select>
+                <select id="statusFilter" onchange="filterTable()">
+                    <option value="">Все статусы</option>
+                    <option value="Активен">Активен</option>
+                    <option value="Академический отпуск">Академический отпуск</option>
+                    <option value="Выпускник">Выпускник</option>
+                    <option value="Отчислен">Отчислен</option>
+                </select>
+                <select id="levelFilter" onchange="filterTable()">
+                    <option value="">Все уровни</option>
+                    <option value="Бакалавр">Бакалавр</option>
+                    <option value="Магистр">Магистр</option>
+                    <option value="Докторант">Докторант</option>
+                </select>
+            </div>
+
+            <!-- STUDENTS TABLE -->
+            <div class="card animate-fadeInUp" style="animation-delay:0.1s;">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Все студенты</h3>
+                    <div class="actions">
+                        <button class="btn btn-sm btn-outline" onclick="exportData('pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-sm btn-outline" onclick="exportData('excel')">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="btn btn-sm btn-outline" onclick="window.print()">
+                            <i class="fas fa-print"></i> Печать
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">#</th>
+                                <th onclick="sortTable(1)">ФИО <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable(2)">Группа</th>
+                                <th onclick="sortTable(3)">Факультет</th>
+                                <th onclick="sortTable(4)">Уровень</th>
+                                <th onclick="sortTable(5)">Курс</th>
+                                <th onclick="sortTable(6)">Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsBody">
+                            <!-- Данные генерируются JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NAVIGATION LINKS -->
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                
+                <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+                
+                <a href="#" onclick="logout(event)" style="color: #ef4444;">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // TOAST SYSTEM
+        // ============================================================
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        let toastTimeout = null;
+
+        function showToast(type, message) {
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+                toast.classList.remove('show');
+            }
+            toast.className = 'toast';
+            const icon = toast.querySelector('i');
+            if (type === 'success') {
+                toast.classList.add('success');
+                icon.className = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else if (type === 'warning') {
+                toast.classList.add('warning');
+                icon.className = 'fas fa-triangle-exclamation';
+            } else {
+                toast.classList.add('info');
+                icon.className = 'fas fa-info-circle';
+            }
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        toast.addEventListener('click', function() {
+            this.classList.remove('show');
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+                toastTimeout = null;
+            }
+        });
+
+        // ============================================================
+        // AUTH CHECK
+        // ============================================================
+        (function() {
+            const isAuth = localStorage.getItem('isAuthenticated');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (isAuth !== 'true' || !user.email) {
+                showToast('error', 'Пожалуйста, войдите в систему');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                return;
+            }
+            const name = user.name || 'Пользователь';
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').textContent = initials || 'АИ';
+        })();
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function logout(e) {
+            e.preventDefault();
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('user');
+                showToast('success', 'Вы успешно вышли');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+            }
+        }
+
+        // ============================================================
+        // THEME TOGGLE
+        // ============================================================
+        let isDark = false;
+
+        function toggleTheme() {
+            isDark = !isDark;
+            const root = document.documentElement;
+            const btn = document.querySelector('.topbar-right .icon-btn[title="Тема"] i');
+            if (isDark) {
+                root.style.setProperty('--bg', '#0f172a');
+                root.style.setProperty('--text', '#f8fafc');
+                root.style.setProperty('--text-light', '#94a3b8');
+                root.style.setProperty('--white', '#1e293b');
+                root.style.setProperty('--shadow', '0 20px 60px rgba(0,0,0,0.4)');
+                btn.className = 'fas fa-sun';
+                showToast('info', 'Тёмная тема включена');
+            } else {
+                root.style.setProperty('--bg', '#f8fafc');
+                root.style.setProperty('--text', '#0f172a');
+                root.style.setProperty('--text-light', '#475569');
+                root.style.setProperty('--white', '#ffffff');
+                root.style.setProperty('--shadow', '0 20px 60px rgba(0,0,0,0.08)');
+                btn.className = 'fas fa-moon';
+                showToast('info', 'Светлая тема включена');
+            }
+        }
+
+        // ============================================================
+        // STUDENTS DATA (полные данные со всеми полями)
+        // ============================================================
+        const studentsData = [
+            {
+                id: 1,
+                photo: '👨',
+                fullName: 'Иванов Иван Иванович',
+                iin: '123456789012',
+                studentId: 'STU-001',
+                phone: '+7 (701) 123-45-67',
+                email: 'ivanov@uni.kz',
+                gender: 'Мужской',
+                birthDate: '2004-05-15',
+                address: 'г. Алматы, ул. Абая 123',
+                citizenship: 'Казахстан',
+                group: 'ИС-41',
+                faculty: 'Информационные технологии',
+                department: 'Информационных систем',
+                speciality: 'Информационные системы',
+                direction: 'Разработка ПО',
+                level: 'Бакалавр',
+                course: 4,
+                semester: 8,
+                status: 'Активен',
+                enrollmentDate: '2022-09-01',
+                gpa: 3.85,
+                parents: 'Иванов И.И., Иванова М.С.',
+                contacts: '+7 (701) 987-65-43'
+            },
+            {
+                id: 2,
+                photo: '👩',
+                fullName: 'Петрова Анна Сергеевна',
+                iin: '234567890123',
+                studentId: 'STU-002',
+                phone: '+7 (701) 234-56-78',
+                email: 'petrova@uni.kz',
+                gender: 'Женский',
+                birthDate: '2005-03-20',
+                address: 'г. Алматы, ул. Толе би 45',
+                citizenship: 'Казахстан',
+                group: 'БД-32',
+                faculty: 'Бизнес-информатика',
+                department: 'Бизнес-аналитики',
+                speciality: 'Бизнес-информатика',
+                direction: 'Бизнес-анализ',
+                level: 'Бакалавр',
+                course: 3,
+                semester: 6,
+                status: 'Активен',
+                enrollmentDate: '2023-09-01',
+                gpa: 3.92,
+                parents: 'Петров С.А., Петрова О.В.',
+                contacts: '+7 (701) 876-54-32'
+            },
+            {
+                id: 3,
+                photo: '👨',
+                fullName: 'Сидоров Петр Алексеевич',
+                iin: '345678901234',
+                studentId: 'STU-003',
+                phone: '+7 (701) 345-67-89',
+                email: 'sidorov@uni.kz',
+                gender: 'Мужской',
+                birthDate: '2004-11-10',
+                address: 'г. Алматы, ул. Жибек жолы 78',
+                citizenship: 'Казахстан',
+                group: 'ПИ-23',
+                faculty: 'Программная инженерия',
+                department: 'Разработки ПО',
+                speciality: 'Программная инженерия',
+                direction: 'Веб-разработка',
+                level: 'Бакалавр',
+                course: 2,
+                semester: 4,
+                status: 'Академический отпуск',
+                enrollmentDate: '2024-09-01',
+                gpa: 3.45,
+                parents: 'Сидоров А.П., Сидорова Е.А.',
+                contacts: '+7 (701) 765-43-21'
+            },
+            {
+                id: 4,
+                photo: '👩',
+                fullName: 'Козлова Мария Дмитриевна',
+                iin: '456789012345',
+                studentId: 'STU-004',
+                phone: '+7 (701) 456-78-90',
+                email: 'kozlov@uni.kz',
+                gender: 'Женский',
+                birthDate: '2005-07-25',
+                address: 'г. Астана, ул. Байтурсынова 12',
+                citizenship: 'Казахстан',
+                group: 'ЭК-21',
+                faculty: 'Экономика',
+                department: 'Экономической теории',
+                speciality: 'Экономика',
+                direction: 'Финансы',
+                level: 'Бакалавр',
+                course: 2,
+                semester: 3,
+                status: 'Активен',
+                enrollmentDate: '2024-09-01',
+                gpa: 3.78,
+                parents: 'Козлов Д.И., Козлова Н.П.',
+                contacts: '+7 (701) 654-32-10'
+            },
+            {
+                id: 5,
+                photo: '👨',
+                fullName: 'Морозов Денис Андреевич',
+                iin: '567890123456',
+                studentId: 'STU-005',
+                phone: '+7 (701) 567-89-01',
+                email: 'morozov@uni.kz',
+                gender: 'Мужской',
+                birthDate: '2003-09-05',
+                address: 'г. Алматы, ул. Сатпаева 56',
+                citizenship: 'Казахстан',
+                group: 'ЮР-11',
+                faculty: 'Юриспруденция',
+                department: 'Гражданского права',
+                speciality: 'Юриспруденция',
+                direction: 'Гражданское право',
+                level: 'Магистр',
+                course: 1,
+                semester: 2,
+                status: 'Выпускник',
+                enrollmentDate: '2021-09-01',
+                gpa: 3.95,
+                parents: 'Морозов А.Д., Морозова Т.В.',
+                contacts: '+7 (701) 543-21-09'
+            },
+            {
+                id: 6,
+                photo: '👩',
+                fullName: 'Волкова Екатерина Ивановна',
+                iin: '678901234567',
+                studentId: 'STU-006',
+                phone: '+7 (701) 678-90-12',
+                email: 'volkova@uni.kz',
+                gender: 'Женский',
+                birthDate: '2004-12-01',
+                address: 'г. Караганда, ул. Бухар-Жырау 34',
+                citizenship: 'Казахстан',
+                group: 'ИС-41',
+                faculty: 'Информационные технологии',
+                department: 'Информационных систем',
+                speciality: 'Информационные системы',
+                direction: 'Кибербезопасность',
+                level: 'Бакалавр',
+                course: 4,
+                semester: 7,
+                status: 'Активен',
+                enrollmentDate: '2022-09-01',
+                gpa: 3.67,
+                parents: 'Волков И.П., Волкова А.С.',
+                contacts: '+7 (701) 432-10-98'
+            },
+            {
+                id: 7,
+                photo: '👨',
+                fullName: 'Нуржанов Ержан Кайратович',
+                iin: '789012345678',
+                studentId: 'STU-007',
+                phone: '+7 (701) 789-01-23',
+                email: 'nurjanov@uni.kz',
+                gender: 'Мужской',
+                birthDate: '2004-06-18',
+                address: 'г. Шымкент, ул. Тауке хана 89',
+                citizenship: 'Казахстан',
+                group: 'МТ-31',
+                faculty: 'Математика и технологии',
+                department: 'Прикладной математики',
+                speciality: 'Математика',
+                direction: 'Data Science',
+                level: 'Бакалавр',
+                course: 3,
+                semester: 5,
+                status: 'Активен',
+                enrollmentDate: '2023-09-01',
+                gpa: 4.00,
+                parents: 'Нуржанов К.Т., Нуржанова А.Б.',
+                contacts: '+7 (701) 321-09-87'
+            }
+        ];
+
+        // ============================================================
+        // RENDER STUDENTS TABLE
+        // ============================================================
+        let currentStudents = [...studentsData];
+
+        function renderStudents(students) {
+            const tbody = document.getElementById('studentsBody');
+            if (!students || students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding: 40px;">
+                            <div style="font-size: 48px; color: #c7d2fe;">📭</div>
+                            <p style="color: var(--text-light); margin-top: 8px;">Студенты не найдены</p>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('totalStudents').textContent = '0';
+                return;
+            }
+
+            tbody.innerHTML = students.map(s => `
+                <tr data-id="${s.id}">
+                    <td>${s.id}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 28px;">${s.photo}</span>
+                            <div>
+                                <strong>${s.fullName}</strong>
+                                <div style="font-size: 12px; color: var(--text-light);">${s.iin}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-info">${s.group}</span></td>
+                    <td>${s.faculty}</td>
+                    <td><span class="badge badge-purple">${s.level}</span></td>
+                    <td>${s.course}</td>
+                    <td>${getStatusBadge(s.status)}</td>
+                    <td>
+                        <div class="action-group">
+                            <button class="btn btn-sm btn-outline" onclick="viewStudent(${s.id})" title="Просмотр">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="editStudent(${s.id})" title="Редактировать">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showAttendance(${s.id})" title="Посещаемость">
+                                <i class="fas fa-clipboard-list"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showGrades(${s.id})" title="Оценки">
+                                <i class="fas fa-star"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showSchedule(${s.id})" title="Расписание">
+                                <i class="fas fa-calendar-alt"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showPayments(${s.id})" title="Платежи">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showLibrary(${s.id})" title="Книги">
+                                <i class="fas fa-book"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showHostel(${s.id})" title="Общежитие">
+                                <i class="fas fa-building"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showDocuments(${s.id})" title="Документы">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="showCertificates(${s.id})" title="Справки">
+                                <i class="fas fa-file-alt"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteStudent(${s.id})" title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('totalStudents').textContent = students.length;
+        }
+
+        function getStatusBadge(status) {
+            const map = {
+                'Активен': 'badge-success',
+                'Академический отпуск': 'badge-warning',
+                'Выпускник': 'badge-purple',
+                'Отчислен': 'badge-danger'
+            };
+            return `<span class="badge ${map[status] || 'badge-neutral'}">${status}</span>`;
+        }
+
+        // ============================================================
+        // FILTER TABLE
+        // ============================================================
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const group = document.getElementById('groupFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const level = document.getElementById('levelFilter').value;
+
+            const filtered = studentsData.filter(s => {
+                const matchSearch = s.fullName.toLowerCase().includes(search) ||
+                                   s.group.toLowerCase().includes(search) ||
+                                   s.faculty.toLowerCase().includes(search) ||
+                                   s.iin.includes(search);
+                const matchGroup = !group || s.group === group;
+                const matchStatus = !status || s.status === status;
+                const matchLevel = !level || s.level === level;
+                return matchSearch && matchGroup && matchStatus && matchLevel;
+            });
+
+            currentStudents = filtered;
+            renderStudents(filtered);
+        }
+
+        // ============================================================
+        // SORT TABLE
+        // ============================================================
+        let sortAsc = true;
+
+        function sortTable(columnIndex) {
+            const fields = ['id', 'fullName', 'group', 'faculty', 'level', 'course', 'status'];
+            const field = fields[columnIndex];
+            if (!field) return;
+
+            currentStudents.sort((a, b) => {
+                let valA = a[field];
+                let valB = b[field];
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return sortAsc ? -1 : 1;
+                if (valA > valB) return sortAsc ? 1 : -1;
+                return 0;
+            });
+
+            sortAsc = !sortAsc;
+            renderStudents(currentStudents);
+        }
+
+        // ============================================================
+        // MODAL
+        // ============================================================
+        function openModal(title, content) {
+            document.getElementById('modalTitle').innerHTML = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Закрытие по клику на оверлей
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ============================================================
+        // VIEW STUDENT (полная карточка студента)
+        // ============================================================
+        function viewStudent(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+
+            const content = `
+                <div style="grid-column: 1 / -1; display: flex; gap: 24px; align-items: center; padding: 16px; background: var(--primary-bg); border-radius: 12px;">
+                    <div style="font-size: 72px;">${s.photo}</div>
+                    <div>
+                        <h2 style="font-size: 24px; margin-bottom: 4px;">${s.fullName}</h2>
+                        <div style="display: flex; gap: 16px; flex-wrap: wrap; color: var(--text-light);">
+                            <span><i class="fas fa-id-card"></i> ${s.studentId}</span>
+                            <span><i class="fas fa-id-badge"></i> ${s.iin}</span>
+                            <span><i class="fas fa-user-graduate"></i> ${s.level}</span>
+                            <span><i class="fas fa-chart-line"></i> GPA: ${s.gpa}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div><label>📞 Телефон</label><input value="${s.phone}" readonly /></div>
+                <div><label>📧 Email</label><input value="${s.email}" readonly /></div>
+                <div><label>⚥ Пол</label><input value="${s.gender}" readonly /></div>
+                <div><label>🎂 Дата рождения</label><input value="${s.birthDate}" readonly /></div>
+                <div><label>📍 Адрес</label><input value="${s.address}" readonly /></div>
+                <div><label>🌍 Гражданство</label><input value="${s.citizenship}" readonly /></div>
+                <div><label>📚 Группа</label><input value="${s.group}" readonly /></div>
+                <div><label>🏛️ Факультет</label><input value="${s.faculty}" readonly /></div>
+                <div><label>📋 Кафедра</label><input value="${s.department}" readonly /></div>
+                <div><label>🎯 Специальность</label><input value="${s.speciality}" readonly /></div>
+                <div><label>📌 Направление</label><input value="${s.direction}" readonly /></div>
+                <div><label>📊 Уровень</label><input value="${s.level}" readonly /></div>
+                <div><label>📖 Курс</label><input value="${s.course}" readonly /></div>
+                <div><label>📆 Семестр</label><input value="${s.semester}" readonly /></div>
+                <div><label>📌 Статус</label><input value="${s.status}" readonly /></div>
+                <div><label>📅 Дата поступления</label><input value="${s.enrollmentDate}" readonly /></div>
+                <div><label>🏆 GPA</label><input value="${s.gpa}" readonly /></div>
+                <div><label>👨‍👩‍👧 Родители</label><input value="${s.parents}" readonly /></div>
+                <div><label>📞 Контакты родителей</label><input value="${s.contacts}" readonly /></div>
+
+                <div class="full-width" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                    <button class="btn btn-sm btn-primary" onclick="showToast('success', 'Справка формируется...')">
+                        <i class="fas fa-file-alt"></i> Справка
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="showToast('success', 'Транскрипт формируется...')">
+                        <i class="fas fa-scroll"></i> Транскрипт
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="exportStudent(${s.id}, 'pdf')">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="exportStudent(${s.id}, 'excel')">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="window.print()">
+                        <i class="fas fa-print"></i> Печать
+                    </button>
+                </div>
+            `;
+
+            openModal(`👨‍🎓 Карточка студента: ${s.fullName}`, content);
+        }
+
+        // ============================================================
+        // EDIT STUDENT
+        // ============================================================
+        function editStudent(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+
+            const content = `
+                <div class="full-width"><label>Фото</label><input value="${s.photo}" /></div>
+                <div class="full-width"><label>ФИО</label><input value="${s.fullName}" /></div>
+                <div><label>ИИН</label><input value="${s.iin}" /></div>
+                <div><label>Номер студбилета</label><input value="${s.studentId}" /></div>
+                <div><label>Телефон</label><input value="${s.phone}" /></div>
+                <div><label>Email</label><input value="${s.email}" /></div>
+                <div><label>Пол</label>
+                    <select>
+                        <option ${s.gender === 'Мужской' ? 'selected' : ''}>Мужской</option>
+                        <option ${s.gender === 'Женский' ? 'selected' : ''}>Женский</option>
+                    </select>
+                </div>
+                <div><label>Дата рождения</label><input type="date" value="${s.birthDate}" /></div>
+                <div class="full-width"><label>Адрес</label><input value="${s.address}" /></div>
+                <div><label>Гражданство</label><input value="${s.citizenship}" /></div>
+                <div><label>Группа</label><input value="${s.group}" /></div>
+                <div><label>Факультет</label><input value="${s.faculty}" /></div>
+                <div><label>Кафедра</label><input value="${s.department}" /></div>
+                <div><label>Специальность</label><input value="${s.speciality}" /></div>
+                <div><label>Направление</label><input value="${s.direction}" /></div>
+                <div><label>Уровень</label>
+                    <select>
+                        <option ${s.level === 'Бакалавр' ? 'selected' : ''}>Бакалавр</option>
+                        <option ${s.level === 'Магистр' ? 'selected' : ''}>Магистр</option>
+                        <option ${s.level === 'Докторант' ? 'selected' : ''}>Докторант</option>
+                    </select>
+                </div>
+                <div><label>Курс</label><input type="number" value="${s.course}" /></div>
+                <div><label>Семестр</label><input type="number" value="${s.semester}" /></div>
+                <div><label>Статус</label>
+                    <select>
+                        <option ${s.status === 'Активен' ? 'selected' : ''}>Активен</option>
+                        <option ${s.status === 'Академический отпуск' ? 'selected' : ''}>Академический отпуск</option>
+                        <option ${s.status === 'Выпускник' ? 'selected' : ''}>Выпускник</option>
+                        <option ${s.status === 'Отчислен' ? 'selected' : ''}>Отчислен</option>
+                    </select>
+                </div>
+                <div><label>Дата поступления</label><input type="date" value="${s.enrollmentDate}" /></div>
+                <div><label>GPA</label><input type="number" step="0.01" value="${s.gpa}" /></div>
+                <div class="full-width"><label>Родители</label><input value="${s.parents}" /></div>
+                <div class="full-width"><label>Контакты родителей</label><input value="${s.contacts}" /></div>
+            `;
+
+            openModal(`✏️ Редактирование: ${s.fullName}`, content);
+        }
+
+        // ============================================================
+        // DELETE STUDENT
+        // ============================================================
+        function deleteStudent(id) {
+            if (confirm('Вы уверены, что хотите удалить этого студента?')) {
+                const index = studentsData.findIndex(s => s.id === id);
+                if (index !== -1) {
+                    studentsData.splice(index, 1);
+                    filterTable();
+                    showToast('success', 'Студент удален');
+                }
+            }
+        }
+
+        // ============================================================
+        // SHOW ATTENDANCE
+        // ============================================================
+        function showAttendance(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `📋 Посещаемость студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // SHOW GRADES
+        // ============================================================
+        function showGrades(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `⭐ Оценки студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // SHOW SCHEDULE
+        // ============================================================
+        function showSchedule(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `📅 Расписание студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // SHOW PAYMENTS
+        // ============================================================
+        function showPayments(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `💰 Платежи студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // SHOW LIBRARY
+        // ============================================================
+        function showLibrary(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `📚 Книги студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // SHOW HOSTEL
+        // ============================================================
+        function showHostel(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `🏠 Общежитие студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // SHOW DOCUMENTS
+        // ============================================================
+        function showDocuments(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `📁 Документы студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // SHOW CERTIFICATES
+        // ============================================================
+        function showCertificates(id) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('info', `📄 Справки студента: ${s.fullName} (Открывается форма)`);
+        }
+
+        // ============================================================
+        // CREATE STUDENT FORM
+        // ============================================================
+        function showCreateForm() {
+            const content = `
+                <div class="full-width"><label>Фото (эмодзи)</label><input placeholder="👨 или 👩" /></div>
+                <div class="full-width"><label>ФИО *</label><input placeholder="Иванов Иван Иванович" /></div>
+                <div><label>ИИН</label><input placeholder="12 цифр" /></div>
+                <div><label>Номер студбилета</label><input placeholder="STU-XXX" /></div>
+                <div><label>Телефон</label><input placeholder="+7 (701) 123-45-67" /></div>
+                <div><label>Email</label><input placeholder="email@uni.kz" /></div>
+                <div><label>Пол</label>
+                    <select><option>Мужской</option><option>Женский</option></select>
+                </div>
+                <div><label>Дата рождения</label><input type="date" /></div>
+                <div class="full-width"><label>Адрес</label><input placeholder="г. Алматы, ул..." /></div>
+                <div><label>Гражданство</label><input placeholder="Казахстан" /></div>
+                <div><label>Группа</label>
+                    <select>
+                        <option>ИС-41</option><option>БД-32</option><option>ПИ-23</option>
+                        <option>ЭК-21</option><option>ЮР-11</option><option>МТ-31</option>
+                    </select>
+                </div>
+                <div><label>Факультет</label>
+                    <select>
+                        <option>Информационные технологии</option>
+                        <option>Бизнес-информатика</option>
+                        <option>Программная инженерия</option>
+                        <option>Экономика</option>
+                        <option>Юриспруденция</option>
+                        <option>Математика и технологии</option>
+                    </select>
+                </div>
+                <div><label>Кафедра</label><input placeholder="Кафедра" /></div>
+                <div><label>Специальность</label><input placeholder="Специальность" /></div>
+                <div><label>Направление</label><input placeholder="Направление" /></div>
+                <div><label>Уровень</label>
+                    <select><option>Бакалавр</option><option>Магистр</option><option>Докторант</option></select>
+                </div>
+                <div><label>Курс</label><input type="number" value="1" /></div>
+                <div><label>Семестр</label><input type="number" value="1" /></div>
+                <div><label>Статус</label>
+                    <select><option>Активен</option><option>Академический отпуск</option><option>Выпускник</option><option>Отчислен</option></select>
+                </div>
+                <div><label>Дата поступления</label><input type="date" /></div>
+                <div><label>GPA</label><input type="number" step="0.01" value="3.0" /></div>
+                <div class="full-width"><label>Родители</label><input placeholder="Иванов И.И., Иванова М.С." /></div>
+                <div class="full-width"><label>Контакты родителей</label><input placeholder="+7 (701) 987-65-43" /></div>
+            `;
+
+            openModal('➕ Добавление нового студента', content);
+        }
+
+        // ============================================================
+        // EXPORT DATA
+        // ============================================================
+        function exportData(type) {
+            const count = currentStudents.length;
+            showToast('success', `📊 Экспорт ${type.toUpperCase()} (${count} студентов) начат`);
+        }
+
+        function exportStudent(id, type) {
+            const s = studentsData.find(st => st.id === id);
+            if (!s) return;
+            showToast('success', `📊 Экспорт ${type.toUpperCase()} для ${s.fullName} начат`);
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        renderStudents(studentsData);
+        console.log('✅ Страница студентов загружена');
+        console.log(`📚 Всего студентов: ${studentsData.length}`);
+    </script>
+</body>
+</html>

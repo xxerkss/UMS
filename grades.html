@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Журнал оценок | University Management System</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Chart.js для графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --primary-bg: #eef2ff;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-light: #475569;
+            --white: #ffffff;
+            --shadow: 0 20px 60px rgba(0,0,0,0.08);
+            --shadow-hover: 0 30px 80px rgba(79,70,229,0.15);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
+        .animate-fadeIn { animation: fadeIn 0.6s ease forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pulse { animation: pulse 2s ease-in-out infinite; }
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        .skeleton-text { height: 16px; margin: 4px 0; }
+        .skeleton-avatar { width: 40px; height: 40px; border-radius: 50%; }
+        .skeleton-card { height: 120px; border-radius: 12px; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(79,70,229,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(79,70,229,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 24px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: transparent;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-left .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .topbar-left .logo i {
+            font-size: 28px;
+            color: var(--primary);
+            background: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(79,70,229,0.1);
+        }
+
+        .topbar-left .logo span { color: var(--text); }
+        .topbar-left .logo small { 
+            font-size: 13px; 
+            font-weight: 400; 
+            color: var(--text-light);
+            margin-left: 4px;
+        }
+
+        .topbar-left h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .topbar-left h1 small {
+            font-weight: 400;
+            font-size: 14px;
+            color: var(--text-light);
+            margin-left: 8px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-right .icon-btn {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .topbar-right .icon-btn:hover {
+            background: var(--white);
+            color: var(--text);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .topbar-right .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .topbar-right .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(79,70,229,0.3);
+        }
+
+        /* BREADCRUMBS */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.3);
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .breadcrumb .separator {
+            color: var(--text-light);
+            opacity: 0.5;
+        }
+
+        /* GLOBAL SEARCH */
+        .global-search {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .global-search input {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 20px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .global-search input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+            background: rgba(255,255,255,0.95);
+        }
+
+        .global-search select {
+            padding: 14px 18px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .global-search select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            background: rgba(255,255,255,0.9);
+        }
+
+        .stat-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .stat-card .icon.blue { background: #dbeafe; color: #2563eb; }
+        .stat-card .icon.green { background: #dcfce7; color: #16a34a; }
+        .stat-card .icon.purple { background: #ede9fe; color: #7c3aed; }
+        .stat-card .icon.orange { background: #fef3c7; color: #d97706; }
+        .stat-card .icon.pink { background: #fce7f3; color: #db2777; }
+        .stat-card .icon.teal { background: #ccfbf1; color: #0d9488; }
+        .stat-card .icon.red { background: #fee2e2; color: #dc2626; }
+        .stat-card .icon.indigo { background: #e0e7ff; color: #4f46e5; }
+
+        .stat-card .info h4 {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .stat-card .info p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* QUICK FILTERS */
+        .quick-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .quick-filters .filter-btn {
+            padding: 6px 16px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 50px;
+            background: rgba(255,255,255,0.5);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-light);
+        }
+
+        .quick-filters .filter-btn:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .quick-filters .filter-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h2 i {
+            color: var(--primary);
+        }
+
+        .page-header .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* CARD */
+        .card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            background: rgba(255,255,255,0.85);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h3 i {
+            color: var(--primary);
+        }
+
+        .card-header .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table thead th {
+            text-align: left;
+            padding: 12px 12px 12px 0;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 2px solid rgba(226, 232, 240, 0.5);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        table thead th:hover {
+            color: var(--primary);
+        }
+
+        table tbody td {
+            padding: 12px 12px 12px 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+            vertical-align: middle;
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        table tbody tr:hover {
+            background: rgba(79,70,229,0.04);
+            border-radius: 8px;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-neutral { background: #e2e8f0; color: #475569; }
+        .badge-purple { background: #ede9fe; color: #7c3aed; }
+        .badge-pink { background: #fce7f3; color: #db2777; }
+        .badge-teal { background: #ccfbf1; color: #0d9488; }
+        .badge-gold { background: #fef3c7; color: #92400e; }
+
+        /* Grade badges */
+        .grade-A { background: #dcfce7; color: #166534; }
+        .grade-B { background: #dbeafe; color: #1e40af; }
+        .grade-C { background: #fef3c7; color: #92400e; }
+        .grade-D { background: #fee2e2; color: #991b1b; }
+        .grade-F { background: #fee2e2; color: #dc2626; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79,70,229,0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: var(--white);
+            box-shadow: 0 4px 16px rgba(34,197,94,0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34,197,94,0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(239,68,68,0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .btn-xs {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        /* GRADE INPUT */
+        .grade-input {
+            width: 60px;
+            padding: 4px 6px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            text-align: center;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.6);
+        }
+
+        .grade-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .grade-input.good { border-color: var(--success); background: #f0fdf4; }
+        .grade-input.mid { border-color: var(--warning); background: #fffbeb; }
+        .grade-input.bad { border-color: var(--danger); background: #fef2f2; }
+
+        /* CHARTS */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .chart-container {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            position: relative;
+            min-height: 250px;
+        }
+
+        .chart-container h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-light);
+        }
+
+        .chart-container canvas {
+            max-height: 200px;
+        }
+
+        /* NAVIGATION */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(226, 232, 240, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: rgba(79,70,229,0.06);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            background: rgba(79,70,229,0.1);
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 420px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast.info { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+        .toast.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .toast i { font-size: 20px; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .modal-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .modal-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .modal-header .close-btn:hover {
+            background: rgba(239,68,68,0.1);
+            color: #ef4444;
+        }
+
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .modal-body .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .modal-body label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .modal-body input,
+        .modal-body select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+            background: var(--bg);
+        }
+
+        .modal-body input:focus,
+        .modal-body select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 12px; }
+            
+            .topbar-left .logo span,
+            .topbar-left .logo small {
+                display: none;
+            }
+
+            .topbar-left h1 small {
+                display: none;
+            }
+
+            .page-header h2 {
+                font-size: 22px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card {
+                padding: 18px 16px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .modal {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .breadcrumb {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .global-search input {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-left h1 {
+                font-size: 18px;
+            }
+
+            .topbar-right .icon-btn {
+                padding: 6px 8px;
+                font-size: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-filters .filter-btn {
+                font-size: 12px;
+                padding: 4px 12px;
+            }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Успешно!</span>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fas fa-edit"></i> Редактирование оценки</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Заполняется динамически -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Закрыть</button>
+                <button class="btn btn-primary" onclick="saveGrade()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="grid-bg"></div>
+
+        <div class="container">
+            
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <a href="index.html" class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>UniSystem <small>v4.0</small></span>
+                    </a>
+                    <h1>
+                        Журнал оценок
+                        <small>Успеваемость студентов</small>
+                    </h1>
+                </div>
+                <div class="topbar-right">
+                    <button class="icon-btn" title="Глобальный поиск" onclick="document.getElementById('globalSearch').focus()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" title="Закладки" onclick="showToast('info', 'Избранное')">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="icon-btn" title="История" onclick="showHistory()">
+                        <i class="fas fa-clock"></i>
+                    </button>
+                    <button class="icon-btn" title="Тема" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="avatar" id="userAvatar" title="Профиль">АИ</div>
+                </div>
+            </header>
+
+            <!-- BREADCRUMBS -->
+            <nav class="breadcrumb">
+                <a href="index.html"><i class="fas fa-home"></i></a>
+                <span class="separator">/</span>
+                <span>Журнал оценок</span>
+            </nav>
+
+             <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+                <a href="students.html"><i class="fas fa-user-graduate"></i> Студенты</a>
+                <a href="teachers.html"><i class="fas fa-chalkboard-teacher"></i> Преподаватели</a>
+                <a href="groups.html"><i class="fas fa-users"></i> Группы</a>
+                
+                
+                <a href="schedule.html"><i class="fas fa-calendar-alt"></i> Расписание</a>
+                <a href="library.html"><i class="fas fa-book"></i> Библиотека</a>
+                <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+                
+               
+            </div>
+            <br>
+            <br>
+
+
+            <!-- GLOBAL SEARCH -->
+            <div class="global-search">
+                <input type="text" id="globalSearch" placeholder="🔍 Поиск по ФИО, группе, предмету..." oninput="applyFilters()" />
+                <select id="subjectFilter" onchange="applyFilters()">
+                    <option value="">Все предметы</option>
+                    <option value="Алгоритмы">Алгоритмы</option>
+                    <option value="Базы данных">Базы данных</option>
+                    <option value="Web-разработка">Web-разработка</option>
+                    <option value="Физика">Физика</option>
+                    <option value="Математика">Математика</option>
+                    <option value="Программирование">Программирование</option>
+                </select>
+                <select id="groupFilter" onchange="applyFilters()">
+                    <option value="">Все группы</option>
+                    <option value="ИС-41">ИС-41</option>
+                    <option value="БД-32">БД-32</option>
+                    <option value="ПИ-23">ПИ-23</option>
+                    <option value="ЭК-21">ЭК-21</option>
+                </select>
+            </div>
+
+            <!-- STATS CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card animate-fadeInUp" style="animation-delay:0.05s;">
+                    <div class="icon blue"><i class="fas fa-users"></i></div>
+                    <div class="info">
+                        <h4 id="totalStudents">0</h4>
+                        <p>Всего студентов</p>
+                    </div>
+                </div>
+                <div class="stat-card animate-fadeInUp" style="animation-delay:0.1s;">
+                    <div class="icon green"><i class="fas fa-check-circle"></i></div>
+                    <div class="info">
+                        <h4 id="avgGpa">0.00</h4>
+                        <p>Средний GPA</p>
+                    </div>
+                </div>
+                <div class="stat-card animate-fadeInUp" style="animation-delay:0.15s;">
+                    <div class="icon purple"><i class="fas fa-star"></i></div>
+                    <div class="info">
+                        <h4 id="topGrade">A</h4>
+                        <p>Лучшая оценка</p>
+                    </div>
+                </div>
+                <div class="stat-card animate-fadeInUp" style="animation-delay:0.2s;">
+                    <div class="icon orange"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="info">
+                        <h4 id="passRate">0%</h4>
+                        <p>Успеваемость</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK FILTERS -->
+            <div class="quick-filters animate-fadeInUp" style="animation-delay:0.25s;">
+                <button class="filter-btn active" data-filter="all" onclick="setQuickFilter('all')">Все</button>
+                <button class="filter-btn" data-filter="excellent" onclick="setQuickFilter('excellent')">Отличники (A)</button>
+                <button class="filter-btn" data-filter="good" onclick="setQuickFilter('good')">Хорошисты (B)</button>
+                <button class="filter-btn" data-filter="satisfactory" onclick="setQuickFilter('satisfactory')">Удовл. (C)</button>
+                <button class="filter-btn" data-filter="poor" onclick="setQuickFilter('poor')">Неудовл. (D,F)</button>
+                <button class="filter-btn" data-filter="gpa-high" onclick="setQuickFilter('gpa-high')">GPA > 3.5</button>
+                <button class="filter-btn" data-filter="gpa-low" onclick="setQuickFilter('gpa-low')">GPA < 2.0</button>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="page-header animate-fadeInUp" style="animation-delay:0.3s;">
+                <h2>
+                    <i class="fas fa-table"></i>
+                    Журнал оценок
+                </h2>
+                <div class="actions">
+                    <button class="btn btn-sm btn-outline" onclick="exportData('pdf')">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="exportData('excel')">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                    <button class="btn btn-sm btn-outline" onclick="window.print()">
+                        <i class="fas fa-print"></i> Печать
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="showAddGrade()">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                </div>
+            </div>
+
+            <!-- CHARTS -->
+            <div class="charts-grid animate-fadeInUp" style="animation-delay:0.35s;">
+                <div class="chart-container">
+                    <h4><i class="fas fa-chart-bar" style="color: var(--primary);"></i> Распределение оценок</h4>
+                    <canvas id="gradesChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h4><i class="fas fa-chart-line" style="color: var(--primary);"></i> GPA по группам</h4>
+                    <canvas id="gpaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- GRADES TABLE -->
+            <div class="card animate-fadeInUp" style="animation-delay:0.4s;">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Все оценки</h3>
+                    <div class="actions">
+                        <span class="badge badge-info" id="resultCount">0 записей</span>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table id="gradesTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">#</th>
+                                <th onclick="sortTable(1)">Фото</th>
+                                <th onclick="sortTable(2)">ФИО <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable(3)">Группа</th>
+                                <th onclick="sortTable(4)">Предмет</th>
+                                <th onclick="sortTable(5)">РК1</th>
+                                <th onclick="sortTable(6)">РК2</th>
+                                <th onclick="sortTable(7)">Экзамен</th>
+                                <th onclick="sortTable(8)">Итог</th>
+                                <th onclick="sortTable(9)">Оценка</th>
+                                <th onclick="sortTable(10)">GPA</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesBody">
+                            <!-- Данные генерируются JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NAVIGATION -->
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+              
+                <a href="profile.html"><i class="fas fa-user"></i> Профиль</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Настройки</a>
+                
+                <a href="#" onclick="logout(event)" style="color: #ef4444;">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // TOAST SYSTEM
+        // ============================================================
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        let toastTimeout = null;
+
+        function showToast(type, message) {
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+                toast.classList.remove('show');
+            }
+            toast.className = 'toast';
+            const icon = toast.querySelector('i');
+            if (type === 'success') {
+                toast.classList.add('success');
+                icon.className = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                toast.classList.add('error');
+                icon.className = 'fas fa-exclamation-circle';
+            } else if (type === 'warning') {
+                toast.classList.add('warning');
+                icon.className = 'fas fa-triangle-exclamation';
+            } else {
+                toast.classList.add('info');
+                icon.className = 'fas fa-info-circle';
+            }
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        toast.addEventListener('click', function() {
+            this.classList.remove('show');
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+                toastTimeout = null;
+            }
+        });
+
+        // ============================================================
+        // AUTH CHECK
+        // ============================================================
+        (function() {
+            const isAuth = localStorage.getItem('isAuthenticated');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (isAuth !== 'true' || !user.email) {
+                showToast('error', 'Пожалуйста, войдите в систему');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                return;
+            }
+            const name = user.name || 'Пользователь';
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').textContent = initials || 'АИ';
+        })();
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+        function logout(e) {
+            e.preventDefault();
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                localStorage.removeItem('isAuthenticated');
+                localStorage.removeItem('user');
+                showToast('success', 'Вы успешно вышли');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+            }
+        }
+
+        // ============================================================
+        // THEME TOGGLE
+        // ============================================================
+        let isDark = false;
+
+        function toggleTheme() {
+            isDark = !isDark;
+            const root = document.documentElement;
+            const btn = document.querySelector('.topbar-right .icon-btn[title="Тема"] i');
+            if (isDark) {
+                root.style.setProperty('--bg', '#0f172a');
+                root.style.setProperty('--text', '#f8fafc');
+                root.style.setProperty('--text-light', '#94a3b8');
+                root.style.setProperty('--white', '#1e293b');
+                root.style.setProperty('--shadow', '0 20px 60px rgba(0,0,0,0.4)');
+                btn.className = 'fas fa-sun';
+                showToast('info', 'Тёмная тема включена');
+            } else {
+                root.style.setProperty('--bg', '#f8fafc');
+                root.style.setProperty('--text', '#0f172a');
+                root.style.setProperty('--text-light', '#475569');
+                root.style.setProperty('--white', '#ffffff');
+                root.style.setProperty('--shadow', '0 20px 60px rgba(0,0,0,0.08)');
+                btn.className = 'fas fa-moon';
+                showToast('info', 'Светлая тема включена');
+            }
+        }
+
+        // ============================================================
+        // GRADES DATA
+        // ============================================================
+        let gradesData = [];
+        let currentGrades = [];
+        let currentFilter = 'all';
+        let sortAsc = true;
+        let editId = null;
+        let chart1 = null;
+        let chart2 = null;
+
+        // Расчет итоговой оценки
+        function calculateFinal(rk1, rk2, exam) {
+            const total = (rk1 * 0.3) + (rk2 * 0.3) + (exam * 0.4);
+            return Math.round(total);
+        }
+
+        // Получение буквенной оценки
+        function getLetterGrade(score) {
+            if (score >= 90) return 'A';
+            if (score >= 80) return 'B';
+            if (score >= 70) return 'C';
+            if (score >= 60) return 'D';
+            return 'F';
+        }
+
+        // Получение GPA
+        function getGPA(letter) {
+            const map = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0 };
+            return map[letter] || 0;
+        }
+
+        // Загрузка данных
+        function loadGrades() {
+            try {
+                const saved = localStorage.getItem('gradesData');
+                if (saved) {
+                    gradesData = JSON.parse(saved);
+                } else {
+                    // Начальные данные
+                    const students = [
+                        { name: 'Иванов И.И.', group: 'ИС-41', photo: '👨' },
+                        { name: 'Петрова А.С.', group: 'БД-32', photo: '👩' },
+                        { name: 'Сидоров П.А.', group: 'ПИ-23', photo: '👨' },
+                        { name: 'Козлова М.Д.', group: 'ЭК-21', photo: '👩' },
+                        { name: 'Волкова Е.И.', group: 'ИС-41', photo: '👩' },
+                        { name: 'Нуржанов Е.К.', group: 'МТ-31', photo: '👨' }
+                    ];
+
+                    const subjects = ['Алгоритмы', 'Базы данных', 'Web-разработка', 'Физика', 'Математика', 'Программирование'];
+
+                    gradesData = [];
+                    let id = 1;
+                    students.forEach(s => {
+                        subjects.forEach(subj => {
+                            const rk1 = Math.floor(Math.random() * 30) + 70;
+                            const rk2 = Math.floor(Math.random() * 30) + 70;
+                            const exam = Math.floor(Math.random() * 30) + 70;
+                            const final = calculateFinal(rk1, rk2, exam);
+                            const letter = getLetterGrade(final);
+                            const gpa = getGPA(letter);
+                            gradesData.push({
+                                id: id++,
+                                photo: s.photo,
+                                fullName: s.name,
+                                group: s.group,
+                                subject: subj,
+                                rk1: rk1,
+                                rk2: rk2,
+                                exam: exam,
+                                final: final,
+                                letter: letter,
+                                gpa: gpa
+                            });
+                        });
+                    });
+                    saveGrades();
+                }
+                currentGrades = [...gradesData];
+                renderGrades(currentGrades);
+                updateStats();
+                updateCharts();
+            } catch (e) {
+                console.warn('Ошибка загрузки данных:', e);
+                gradesData = [];
+                currentGrades = [];
+                renderGrades([]);
+            }
+        }
+
+        function saveGrades() {
+            try {
+                localStorage.setItem('gradesData', JSON.stringify(gradesData));
+            } catch (e) {
+                console.warn('Не удалось сохранить данные:', e);
+            }
+        }
+
+        // ============================================================
+        // RENDER GRADES
+        // ============================================================
+        function renderGrades(grades) {
+            const tbody = document.getElementById('gradesBody');
+            if (!grades || grades.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="12" style="text-align:center; padding: 40px;">
+                            <div style="font-size: 48px; color: #c7d2fe;">📊</div>
+                            <p style="color: var(--text-light); margin-top: 8px;">Оценки не найдены</p>
+                            <button class="btn btn-primary btn-sm" style="margin-top: 12px;" onclick="showAddGrade()">
+                                <i class="fas fa-plus"></i> Добавить оценку
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('resultCount').textContent = '0 записей';
+                return;
+            }
+
+            tbody.innerHTML = grades.map(g => `
+                <tr data-id="${g.id}">
+                    <td>${g.id}</td>
+                    <td style="font-size: 28px;">${g.photo}</td>
+                    <td><strong>${g.fullName}</strong></td>
+                    <td><span class="badge badge-info">${g.group}</span></td>
+                    <td>${g.subject}</td>
+                    <td><input class="grade-input ${g.rk1 >= 80 ? 'good' : g.rk1 >= 60 ? 'mid' : 'bad'}" value="${g.rk1}" onchange="updateGrade(${g.id}, 'rk1', this.value)" /></td>
+                    <td><input class="grade-input ${g.rk2 >= 80 ? 'good' : g.rk2 >= 60 ? 'mid' : 'bad'}" value="${g.rk2}" onchange="updateGrade(${g.id}, 'rk2', this.value)" /></td>
+                    <td><input class="grade-input ${g.exam >= 80 ? 'good' : g.exam >= 60 ? 'mid' : 'bad'}" value="${g.exam}" onchange="updateGrade(${g.id}, 'exam', this.value)" /></td>
+                    <td><strong>${g.final}</strong></td>
+                    <td><span class="badge grade-${g.letter}">${g.letter}</span></td>
+                    <td><strong>${g.gpa.toFixed(2)}</strong></td>
+                    <td>
+                        <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                            <button class="btn btn-xs btn-outline" onclick="editGrade(${g.id})" title="Редактировать">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-xs btn-danger" onclick="deleteGrade(${g.id})" title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('resultCount').textContent = `${grades.length} записей`;
+        }
+
+        // ============================================================
+        // UPDATE GRADE
+        // ============================================================
+        function updateGrade(id, field, value) {
+            const grade = gradesData.find(g => g.id === id);
+            if (!grade) return;
+            
+            const numValue = parseFloat(value);
+            if (isNaN(numValue) || numValue < 0 || numValue > 100) {
+                showToast('error', 'Введите значение от 0 до 100');
+                return;
+            }
+
+            grade[field] = numValue;
+            grade.final = calculateFinal(grade.rk1, grade.rk2, grade.exam);
+            grade.letter = getLetterGrade(grade.final);
+            grade.gpa = getGPA(grade.letter);
+
+            saveGrades();
+            currentGrades = [...gradesData];
+            applyFilters();
+            updateStats();
+            updateCharts();
+            addHistory('Обновление оценки', `${grade.fullName} - ${grade.subject}`);
+        }
+
+        // ============================================================
+        // DELETE GRADE
+        // ============================================================
+        function deleteGrade(id) {
+            if (confirm('Вы уверены, что хотите удалить эту оценку?')) {
+                const index = gradesData.findIndex(g => g.id === id);
+                if (index !== -1) {
+                    const name = gradesData[index].fullName;
+                    gradesData.splice(index, 1);
+                    gradesData.forEach((g, idx) => g.id = idx + 1);
+                    saveGrades();
+                    currentGrades = [...gradesData];
+                    applyFilters();
+                    updateStats();
+                    updateCharts();
+                    showToast('success', 'Оценка удалена');
+                    addHistory('Удаление оценки', name);
+                }
+            }
+        }
+
+        // ============================================================
+        // ADD GRADE
+        // ============================================================
+        function showAddGrade() {
+            const content = `
+                <div class="full-width"><label>Студент</label>
+                    <select id="gradeStudent">
+                        <option value="Иванов И.И.">Иванов И.И.</option>
+                        <option value="Петрова А.С.">Петрова А.С.</option>
+                        <option value="Сидоров П.А.">Сидоров П.А.</option>
+                        <option value="Козлова М.Д.">Козлова М.Д.</option>
+                        <option value="Волкова Е.И.">Волкова Е.И.</option>
+                        <option value="Нуржанов Е.К.">Нуржанов Е.К.</option>
+                    </select>
+                </div>
+                <div><label>Группа</label>
+                    <select id="gradeGroup">
+                        <option>ИС-41</option><option>БД-32</option><option>ПИ-23</option>
+                        <option>ЭК-21</option><option>МТ-31</option>
+                    </select>
+                </div>
+                <div><label>Предмет</label>
+                    <select id="gradeSubject">
+                        <option>Алгоритмы</option><option>Базы данных</option>
+                        <option>Web-разработка</option><option>Физика</option>
+                        <option>Математика</option><option>Программирование</option>
+                    </select>
+                </div>
+                <div class="full-width"><label>Фото (эмодзи)</label>
+                    <select id="gradePhoto">
+                        <option value="👨">👨</option><option value="👩">👩</option>
+                        <option value="👨‍🎓">👨‍🎓</option><option value="👩‍🎓">👩‍🎓</option>
+                    </select>
+                </div>
+                <div><label>РК1</label><input type="number" id="gradeRk1" value="75" min="0" max="100" /></div>
+                <div><label>РК2</label><input type="number" id="gradeRk2" value="75" min="0" max="100" /></div>
+                <div><label>Экзамен</label><input type="number" id="gradeExam" value="75" min="0" max="100" /></div>
+            `;
+
+            openModal('➕ Добавление оценки', content);
+            document.querySelector('.modal-footer .btn-primary').onclick = function() {
+                const photo = document.getElementById('gradePhoto').value;
+                const fullName = document.getElementById('gradeStudent').value;
+                const group = document.getElementById('gradeGroup').value;
+                const subject = document.getElementById('gradeSubject').value;
+                const rk1 = parseFloat(document.getElementById('gradeRk1').value) || 0;
+                const rk2 = parseFloat(document.getElementById('gradeRk2').value) || 0;
+                const exam = parseFloat(document.getElementById('gradeExam').value) || 0;
+                const final = calculateFinal(rk1, rk2, exam);
+                const letter = getLetterGrade(final);
+                const gpa = getGPA(letter);
+
+                gradesData.push({
+                    id: gradesData.length + 1,
+                    photo: photo,
+                    fullName: fullName,
+                    group: group,
+                    subject: subject,
+                    rk1: rk1,
+                    rk2: rk2,
+                    exam: exam,
+                    final: final,
+                    letter: letter,
+                    gpa: gpa
+                });
+
+                saveGrades();
+                currentGrades = [...gradesData];
+                applyFilters();
+                updateStats();
+                updateCharts();
+                closeModal();
+                showToast('success', 'Оценка добавлена');
+                addHistory('Добавление оценки', `${fullName} - ${subject}`);
+            };
+        }
+
+        // ============================================================
+        // EDIT GRADE
+        // ============================================================
+        function editGrade(id) {
+            const g = gradesData.find(gr => gr.id === id);
+            if (!g) return;
+
+            const content = `
+                <div class="full-width"><label>Студент</label><input value="${g.fullName}" /></div>
+                <div><label>Группа</label><input value="${g.group}" /></div>
+                <div><label>Предмет</label><input value="${g.subject}" /></div>
+                <div><label>РК1</label><input type="number" id="editRk1" value="${g.rk1}" min="0" max="100" /></div>
+                <div><label>РК2</label><input type="number" id="editRk2" value="${g.rk2}" min="0" max="100" /></div>
+                <div><label>Экзамен</label><input type="number" id="editExam" value="${g.exam}" min="0" max="100" /></div>
+            `;
+
+            openModal(`✏️ Редактирование: ${g.fullName}`, content, id);
+            document.querySelector('.modal-footer .btn-primary').onclick = function() {
+                const rk1 = parseFloat(document.getElementById('editRk1').value) || 0;
+                const rk2 = parseFloat(document.getElementById('editRk2').value) || 0;
+                const exam = parseFloat(document.getElementById('editExam').value) || 0;
+                
+                const grade = gradesData.find(gr => gr.id === id);
+                if (grade) {
+                    grade.rk1 = rk1;
+                    grade.rk2 = rk2;
+                    grade.exam = exam;
+                    grade.final = calculateFinal(rk1, rk2, exam);
+                    grade.letter = getLetterGrade(grade.final);
+                    grade.gpa = getGPA(grade.letter);
+                    
+                    saveGrades();
+                    currentGrades = [...gradesData];
+                    applyFilters();
+                    updateStats();
+                    updateCharts();
+                    closeModal();
+                    showToast('success', 'Оценка обновлена');
+                    addHistory('Редактирование оценки', `${grade.fullName} - ${grade.subject}`);
+                }
+            };
+        }
+
+        // ============================================================
+        // FILTERS
+        // ============================================================
+        function setQuickFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let filtered = [...gradesData];
+            
+            // Поиск
+            const search = document.getElementById('globalSearch').value.toLowerCase();
+            if (search) {
+                filtered = filtered.filter(g => 
+                    g.fullName.toLowerCase().includes(search) ||
+                    g.group.toLowerCase().includes(search) ||
+                    g.subject.toLowerCase().includes(search)
+                );
+            }
+
+            // Фильтр по предмету
+            const subject = document.getElementById('subjectFilter').value;
+            if (subject) {
+                filtered = filtered.filter(g => g.subject === subject);
+            }
+
+            // Фильтр по группе
+            const group = document.getElementById('groupFilter').value;
+            if (group) {
+                filtered = filtered.filter(g => g.group === group);
+            }
+
+            // Быстрый фильтр
+            if (currentFilter === 'excellent') {
+                filtered = filtered.filter(g => g.letter === 'A');
+            } else if (currentFilter === 'good') {
+                filtered = filtered.filter(g => g.letter === 'B');
+            } else if (currentFilter === 'satisfactory') {
+                filtered = filtered.filter(g => g.letter === 'C');
+            } else if (currentFilter === 'poor') {
+                filtered = filtered.filter(g => g.letter === 'D' || g.letter === 'F');
+            } else if (currentFilter === 'gpa-high') {
+                filtered = filtered.filter(g => g.gpa >= 3.5);
+            } else if (currentFilter === 'gpa-low') {
+                filtered = filtered.filter(g => g.gpa < 2.0);
+            }
+
+            currentGrades = filtered;
+            renderGrades(filtered);
+        }
+
+        // ============================================================
+        // SORT
+        // ============================================================
+        function sortTable(columnIndex) {
+            const fields = ['id', 'photo', 'fullName', 'group', 'subject', 'rk1', 'rk2', 'exam', 'final', 'letter', 'gpa'];
+            const field = fields[columnIndex];
+            if (!field) return;
+
+            currentGrades.sort((a, b) => {
+                let valA = a[field];
+                let valB = b[field];
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return sortAsc ? -1 : 1;
+                if (valA > valB) return sortAsc ? 1 : -1;
+                return 0;
+            });
+
+            sortAsc = !sortAsc;
+            renderGrades(currentGrades);
+        }
+
+        // ============================================================
+        // STATS
+        // ============================================================
+        function updateStats() {
+            const total = gradesData.length;
+            document.getElementById('totalStudents').textContent = total;
+
+            if (total === 0) {
+                document.getElementById('avgGpa').textContent = '0.00';
+                document.getElementById('topGrade').textContent = '-';
+                document.getElementById('passRate').textContent = '0%';
+                return;
+            }
+
+            const avgGpa = gradesData.reduce((sum, g) => sum + g.gpa, 0) / total;
+            document.getElementById('avgGpa').textContent = avgGpa.toFixed(2);
+
+            const letters = gradesData.map(g => g.letter);
+            const top = letters.reduce((a, b) => {
+                const order = ['A', 'B', 'C', 'D', 'F'];
+                return order.indexOf(a) < order.indexOf(b) ? a : b;
+            });
+            document.getElementById('topGrade').textContent = top;
+
+            const passed = gradesData.filter(g => g.letter !== 'F').length;
+            document.getElementById('passRate').textContent = `${Math.round(passed / total * 100)}%`;
+        }
+
+        // ============================================================
+        // CHARTS
+        // ============================================================
+        function updateCharts() {
+            // График распределения оценок
+            const letters = ['A', 'B', 'C', 'D', 'F'];
+            const counts = letters.map(l => gradesData.filter(g => g.letter === l).length);
+
+            if (chart1) chart1.destroy();
+            const ctx1 = document.getElementById('gradesChart').getContext('2d');
+            chart1 = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['A (Отлично)', 'B (Хорошо)', 'C (Удовл.)', 'D (Слабо)', 'F (Неуд.)'],
+                    datasets: [{
+                        label: 'Количество студентов',
+                        data: counts,
+                        backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b', '#f97316', '#ef4444'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+
+            // График GPA по группам
+            const groups = [...new Set(gradesData.map(g => g.group))];
+            const gpaByGroup = groups.map(group => {
+                const grades = gradesData.filter(g => g.group === group);
+                return grades.reduce((sum, g) => sum + g.gpa, 0) / grades.length || 0;
+            });
+
+            if (chart2) chart2.destroy();
+            const ctx2 = document.getElementById('gpaChart').getContext('2d');
+            chart2 = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: groups,
+                    datasets: [{
+                        label: 'Средний GPA',
+                        data: gpaByGroup,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79,70,229,0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#4f46e5',
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 4.0 }
+                    }
+                }
+            });
+        }
+
+        // ============================================================
+        // MODAL
+        // ============================================================
+        function openModal(title, content, id = null) {
+            editId = id;
+            document.getElementById('modalTitle').innerHTML = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            editId = null;
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ============================================================
+        // HISTORY
+        // ============================================================
+        let historyData = [];
+
+        function addHistory(action, target) {
+            const entry = {
+                time: new Date().toLocaleString(),
+                action: action,
+                target: target,
+                user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).name || 'Пользователь' : 'Пользователь'
+            };
+            historyData.unshift(entry);
+            if (historyData.length > 50) historyData.pop();
+            localStorage.setItem('historyGrades', JSON.stringify(historyData));
+        }
+
+        function showHistory() {
+            const saved = localStorage.getItem('historyGrades');
+            if (saved) historyData = JSON.parse(saved);
+
+            const content = `
+                <div class="full-width">
+                    <h4 style="margin-bottom: 12px;">📋 История действий</h4>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        ${historyData.length === 0 ? `
+                            <p style="color: var(--text-light); text-align: center; padding: 20px;">История пуста</p>
+                        ` : historyData.map(h => `
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(226,232,240,0.3); font-size: 13px;">
+                                <span style="color: var(--text-light); font-size: 12px; min-width: 80px;">${h.time}</span>
+                                <span style="flex: 1;">${h.action}: <strong>${h.target}</strong></span>
+                                <span style="color: var(--primary); font-weight: 500;">${h.user}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${historyData.length > 0 ? `
+                        <div style="margin-top: 12px; text-align: right;">
+                            <button class="btn btn-sm btn-danger" onclick="clearHistoryGrades()">Очистить историю</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            openModal('📋 История действий', content);
+        }
+
+        function clearHistoryGrades() {
+            if (confirm('Очистить всю историю?')) {
+                historyData = [];
+                localStorage.setItem('historyGrades', JSON.stringify(historyData));
+                showToast('success', 'История очищена');
+                closeModal();
+            }
+        }
+
+        // ============================================================
+        // EXPORT
+        // ============================================================
+        function exportData(type) {
+            showToast('success', `📊 Экспорт ${type.toUpperCase()} (${currentGrades.length} записей) начат`);
+            addHistory('Экспорт данных', `${type.toUpperCase()} - ${currentGrades.length} записей`);
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        // Загружаем историю
+        const savedHistory = localStorage.getItem('historyGrades');
+        if (savedHistory) historyData = JSON.parse(savedHistory);
+
+        // Загружаем данные
+        loadGrades();
+        addHistory('Загрузка страницы', 'Журнал оценок');
+
+        console.log('✅ Страница журнала оценок загружена');
+        console.log(`📊 Всего оценок: ${gradesData.length}`);
+        console.log('💡 Данные синхронизируются через localStorage');
+    </script>
+</body>
+</html>

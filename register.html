@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация | University Management System</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #818cf8;
+            --primary-bg: #eef2ff;
+            --bg: #f1f5f9;
+            --text: #0f172a;
+            --text-light: #475569;
+            --white: #ffffff;
+            --shadow: 0 20px 60px rgba(0,0,0,0.08);
+            --radius: 20px;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+        }
+
+        /* ============================================================
+           ANIMATIONS
+           ============================================================ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-fadeInUp { animation: fadeInUp 0.6s ease forwards; }
+        .animate-fadeIn { animation: fadeIn 0.6s ease forwards; }
+        .animate-slideInRight { animation: slideInRight 0.6s ease forwards; }
+        .shake { animation: shake 0.4s ease; }
+        .pulse { animation: pulse 0.5s ease; }
+
+        /* ============================================================
+           CONTAINER
+           ============================================================ */
+        .container {
+            max-width: 560px;
+            width: 100%;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* ============================================================
+           LOGO
+           ============================================================ */
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .logo a {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            transition: var(--transition);
+        }
+
+        .logo a:hover {
+            transform: scale(1.02);
+        }
+
+        .logo a i {
+            font-size: 32px;
+            color: var(--primary);
+            background: var(--primary-bg);
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .logo a span { color: var(--text); }
+        .logo a small { font-size: 16px; font-weight: 400; color: var(--text-light); }
+
+        /* ============================================================
+           CARD
+           ============================================================ */
+        .card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 40px 36px;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            animation: slideInRight 0.6s ease forwards;
+        }
+
+        .card:hover {
+            box-shadow: 0 30px 80px rgba(79,70,229,0.12);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            transition: var(--transition);
+        }
+
+        .header .back-link:hover {
+            color: var(--primary);
+        }
+
+        .header h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* ============================================================
+           PROGRESS STEPS
+           ============================================================ */
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0 28px;
+        }
+
+        .progress-steps .step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .progress-steps .step .num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: var(--text-light);
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .progress-steps .step.active .num {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .progress-steps .step.completed .num {
+            background: #22c55e;
+            color: var(--white);
+        }
+
+        .progress-steps .step.active {
+            color: var(--primary);
+        }
+
+        .progress-steps .step.completed {
+            color: #22c55e;
+        }
+
+        .progress-steps .line {
+            flex: 0 0 40px;
+            height: 2px;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+
+        .progress-steps .line.completed {
+            background: #22c55e;
+        }
+
+        /* ============================================================
+           FORM
+           ============================================================ */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .form-group .hint {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 12px 16px 12px 46px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            transition: var(--transition);
+            color: var(--text);
+            appearance: none;
+        }
+
+        .input-wrapper select {
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        .input-wrapper select + .icon {
+            pointer-events: none;
+        }
+
+        .input-wrapper .select-arrow {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79,70,229,0.08);
+        }
+
+        .input-wrapper input:focus + .icon,
+        .input-wrapper select:focus + .icon {
+            color: var(--primary);
+        }
+
+        .input-wrapper input::placeholder {
+            color: #94a3b8;
+        }
+
+        .input-wrapper input.error,
+        .input-wrapper select.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239,68,68,0.08);
+        }
+
+        .input-wrapper input.success,
+        .input-wrapper select.success {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34,197,94,0.08);
+        }
+
+        .input-wrapper .error-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ef4444;
+            font-size: 16px;
+            display: none;
+        }
+
+        .input-wrapper .success-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #22c55e;
+            font-size: 16px;
+            display: none;
+        }
+
+        .input-wrapper input.error ~ .error-icon { display: block; }
+        .input-wrapper input.success ~ .success-icon { display: block; }
+
+        .input-wrapper .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            transition: var(--transition);
+        }
+
+        .input-wrapper .toggle-password:hover {
+            color: var(--text);
+        }
+
+        .error-message {
+            font-size: 12px;
+            color: #ef4444;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error-message.show { display: block; }
+
+        /* ============================================================
+           TERMS
+           ============================================================ */
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 16px 0 20px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .terms input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 1px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .terms a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================================
+           ROLE SELECTOR
+           ============================================================ */
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .role-option {
+            padding: 16px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: transparent;
+            position: relative;
+        }
+
+        .role-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .role-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .role-option i {
+            font-size: 28px;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .role-option .role-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .role-option .role-desc {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .role-option .check-mark {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: var(--primary);
+            font-size: 16px;
+            display: none;
+        }
+
+        .role-option.selected .check-mark {
+            display: block;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79,70,229,0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary i { margin-right: 8px; }
+
+        .btn-secondary {
+            background: var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 8px 30px rgba(71,85,105,0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* ============================================================
+           DIVIDER
+           ============================================================ */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        /* ============================================================
+           LOGIN LINK
+           ============================================================ */
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .login-link a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .login-link .separator {
+            margin: 0 8px;
+            color: var(--text-light);
+        }
+
+        /* ============================================================
+           PASSWORD STRENGTH
+           ============================================================ */
+        .password-strength {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .password-strength .bars {
+            display: flex;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .password-strength .bar {
+            height: 4px;
+            flex: 1;
+            border-radius: 4px;
+            background: #e2e8f0;
+            transition: var(--transition);
+        }
+
+        .password-strength .bar.weak { background: #ef4444; }
+        .password-strength .bar.medium { background: #f59e0b; }
+        .password-strength .bar.strong { background: #22c55e; }
+
+        .password-strength .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .password-strength .label.weak { color: #ef4444; }
+        .password-strength .label.medium { color: #f59e0b; }
+        .password-strength .label.strong { color: #22c55e; }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 14px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 420px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast.info { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); }
+
+        .toast i { font-size: 20px; }
+
+        /* ============================================================
+           SPINNER
+           ============================================================ */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        /* ============================================================
+           SUCCESS PAGE
+           ============================================================ */
+        .success-page {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .success-page .check-circle {
+            font-size: 72px;
+            color: #22c55e;
+            margin-bottom: 16px;
+            animation: pulse 1s ease infinite;
+        }
+
+        .success-page h3 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .success-page p {
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .success-page .user-info {
+            background: var(--primary-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .success-page .user-info .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 14px;
+        }
+
+        .success-page .user-info .row .label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .success-page .user-info .row .value {
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 600px) {
+            .card { padding: 24px 18px; }
+            .header h2 { font-size: 24px; }
+            .logo a { font-size: 24px; }
+            .progress-steps { flex-wrap: wrap; gap: 8px; }
+            .progress-steps .line { flex: 0 0 20px; }
+            .progress-steps .step { font-size: 10px; }
+            .progress-steps .step .num { width: 22px; height: 22px; font-size: 10px; }
+            .container { padding: 0 4px; }
+            .role-selector { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 400px) {
+            .progress-steps .line { display: none; }
+            .role-selector { grid-template-columns: 1fr; }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Успешно!</span>
+    </div>
+
+    <!-- ============================================================
+    CONTAINER
+    ============================================================ -->
+    <div class="container">
+        
+        <!-- LOGO -->
+        <div class="logo">
+            <a href="index.html">
+                <i class="fas fa-graduation-cap"></i>
+                <span>UniSystem <small>Регистрация</small></span>
+            </a>
+        </div>
+
+        <!-- CARD -->
+        <div class="card">
+            
+            <!-- HEADER -->
+            <div class="header">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> На главную
+                </a>
+                <h2>Создание аккаунта</h2>
+                <p>Зарегистрируйтесь для доступа к системе</p>
+            </div>
+
+            <!-- PROGRESS STEPS -->
+            <div class="progress-steps">
+                <div class="step active" id="step1">
+                    <span class="num">1</span>
+                    <span>Личные данные</span>
+                </div>
+                <div class="line" id="line1"></div>
+                <div class="step" id="step2">
+                    <span class="num">2</span>
+                    <span>Роль</span>
+                </div>
+                <div class="line" id="line2"></div>
+                <div class="step" id="step3">
+                    <span class="num">3</span>
+                    <span>Готово</span>
+                </div>
+            </div>
+
+            <!-- ШАГ 1: Личные данные -->
+            <div id="step1Content">
+                <form id="step1Form" onsubmit="event.preventDefault(); goToStep2();">
+                    <div class="form-group">
+                        <label for="fullName">ФИО <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="text" id="fullName" placeholder="Иванов Иван Иванович" required />
+                            <i class="fas fa-user icon"></i>
+                            <i class="fas fa-check-circle success-icon"></i>
+                            <i class="fas fa-exclamation-circle error-icon"></i>
+                        </div>
+                        <div class="error-message" id="fullNameError">Введите полное ФИО (минимум 3 символа)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="email" id="email" placeholder="your@email.com" required />
+                            <i class="fas fa-envelope icon"></i>
+                            <i class="fas fa-check-circle success-icon"></i>
+                            <i class="fas fa-exclamation-circle error-icon"></i>
+                        </div>
+                        <div class="error-message" id="emailError">Введите корректный email</div>
+                        <div class="error-message" id="emailExistsError" style="color: #ef4444;">Этот email уже зарегистрирован</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Телефон</label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="phone" placeholder="+7 701 123 4567" />
+                            <i class="fas fa-phone icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Пароль <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" placeholder="Минимум 6 символов" required minlength="6" />
+                            <i class="fas fa-lock icon"></i>
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', 'passwordToggleIcon')">
+                                <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                            </button>
+                        </div>
+                        <!-- Password Strength -->
+                        <div class="password-strength" id="passwordStrength">
+                            <div class="bars">
+                                <div class="bar" id="bar1"></div>
+                                <div class="bar" id="bar2"></div>
+                                <div class="bar" id="bar3"></div>
+                            </div>
+                            <span class="label" id="strengthLabel">Слабый</span>
+                        </div>
+                        <div class="error-message" id="passwordError">Пароль должен содержать минимум 6 символов</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Подтверждение пароля <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="password" id="confirmPassword" placeholder="Повторите пароль" required />
+                            <i class="fas fa-check-circle icon"></i>
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', 'confirmToggleIcon')">
+                                <i class="fas fa-eye" id="confirmToggleIcon"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="confirmError">Пароли не совпадают</div>
+                    </div>
+
+                    <div class="terms">
+                        <input type="checkbox" id="terms" required />
+                        <label for="terms">
+                            Я соглашаюсь с <a href="#" onclick="showToast('info', 'Показаны условия использования')">условиями использования</a>
+                            и <a href="#" onclick="showToast('info', 'Показана политика конфиденциальности')">политикой конфиденциальности</a>
+                            <span class="required">*</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top:8px;">
+                        <i class="fas fa-arrow-right"></i> Продолжить
+                    </button>
+                </form>
+            </div>
+
+            <!-- ШАГ 2: Выбор роли -->
+            <div id="step2Content" style="display:none;">
+                <p style="color: var(--text-light); font-size: 14px; margin-bottom: 20px;">
+                    Выберите роль, которая соответствует вашему статусу в системе:
+                </p>
+
+                <div class="role-selector" id="roleSelector">
+                    <div class="role-option selected" onclick="selectRegisterRole('student')" data-role="student">
+                        <i class="fas fa-user-graduate"></i>
+                        <div class="role-name">Студент</div>
+                        <div class="role-desc">Доступ к оценкам, расписанию</div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                    <div class="role-option" onclick="selectRegisterRole('teacher')" data-role="teacher">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <div class="role-name">Преподаватель</div>
+                        <div class="role-desc">Управление оценками, посещаемостью</div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                    <div class="role-option" onclick="selectRegisterRole('admin')" data-role="admin">
+                        <i class="fas fa-user-shield"></i>
+                        <div class="role-name">Администратор</div>
+                        <div class="role-desc">Полный доступ к системе</div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                    <div class="role-option" onclick="selectRegisterRole('manager')" data-role="manager">
+                        <i class="fas fa-user-tie"></i>
+                        <div class="role-name">Менеджер</div>
+                        <div class="role-desc">Управление студентами, группами</div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                    <div class="role-option" onclick="selectRegisterRole('developer')" data-role="developer">
+                        <i class="fas fa-code"></i>
+                        <div class="role-name">Разработчик</div>
+                        <div class="role-desc">Технический доступ</div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                    <div class="role-option" onclick="selectRegisterRole('accountant')" data-role="accountant">
+                        <i class="fas fa-calculator"></i>
+                        <div class="role-name">Бухгалтер</div>
+                        <div class="role-desc">Финансовые операции</div>
+                        <div class="check-mark"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="selectedRole" value="student" />
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn-primary btn-secondary" onclick="goToStep(1)" style="flex: 1;">
+                        <i class="fas fa-arrow-left"></i> Назад
+                    </button>
+                    <button type="button" class="btn-primary" id="registerBtn" onclick="handleRegister()" style="flex: 2;">
+                        <i class="fas fa-user-plus"></i>
+                        <span id="registerBtnText">Зарегистрироваться</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ШАГ 3: Успешная регистрация -->
+            <div id="step3Content" style="display:none;">
+                <div class="success-page">
+                    <div class="check-circle"><i class="fas fa-check-circle"></i></div>
+                    <h3>Регистрация успешна! 🎉</h3>
+                    <p>Ваш аккаунт создан. Теперь вы можете войти в систему.</p>
+                    
+                    <div class="user-info" id="userInfoDisplay">
+                        <div class="row"><span class="label">ФИО:</span><span class="value" id="displayName">—</span></div>
+                        <div class="row"><span class="label">Email:</span><span class="value" id="displayEmail">—</span></div>
+                        <div class="row"><span class="label">Роль:</span><span class="value" id="displayRole">—</span></div>
+                        <div class="row"><span class="label">Телефон:</span><span class="value" id="displayPhone">—</span></div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                        <a href="login.html" class="btn-primary" style="flex: 1;">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </a>
+                        <a href="dashboard.html" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #22c55e, #16a34a);">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- БОКОВЫЕ ССЫЛКИ (всегда видны) -->
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 13px;">
+                <a href="index.html" style="color: var(--text-light); text-decoration: none; margin: 0 8px;">
+                    <i class="fas fa-home"></i> Главная
+                </a>
+                <span style="color: var(--text-light);">|</span>
+                <a href="login.html" style="color: var(--primary); text-decoration: none; margin: 0 8px; font-weight: 600;">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </a>
+                <span style="color: var(--text-light);">|</span>
+                <a href="#" onclick="showToast('info', 'Страница помощи')" style="color: var(--text-light); text-decoration: none; margin: 0 8px;">
+                    <i class="fas fa-question-circle"></i> Помощь
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    JAVASCRIPT - ПОЛНАЯ ЛОГИКА
+    ============================================================ -->
+    <script>
+        /**
+         * ============================================================
+         * UNIVERSITY MANAGEMENT SYSTEM - REGISTER PAGE (FIXED)
+         * ============================================================
+         * 
+         * Исправлена логика регистрации:
+         * - Правильное сохранение пользователей в localStorage
+         * - Проверка на существующий email
+         * - Полноценная валидация
+         * - Успешная регистрация с переходом
+         */
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        const state = {
+            currentStep: 1,
+            selectedRole: 'student',
+            isLoading: false,
+            registeredUser: null
+        };
+
+        // ============================================================
+        // DOM REFS
+        // ============================================================
+        const step1Content = document.getElementById('step1Content');
+        const step2Content = document.getElementById('step2Content');
+        const step3Content = document.getElementById('step3Content');
+        const stepEls = {
+            1: document.getElementById('step1'),
+            2: document.getElementById('step2'),
+            3: document.getElementById('step3')
+        };
+        const lines = {
+            1: document.getElementById('line1'),
+            2: document.getElementById('line2')
+        };
+
+        // Поля
+        const fullName = document.getElementById('fullName');
+        const email = document.getElementById('email');
+        const phone = document.getElementById('phone');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const terms = document.getElementById('terms');
+
+        // Ошибки
+        const fullNameError = document.getElementById('fullNameError');
+        const emailError = document.getElementById('emailError');
+        const emailExistsError = document.getElementById('emailExistsError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmError = document.getElementById('confirmError');
+
+        // Кнопки
+        const registerBtn = document.getElementById('registerBtn');
+        const registerBtnText = document.getElementById('registerBtnText');
+
+        // Toast
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // ============================================================
+        // STEP NAVIGATION
+        // ============================================================
+        function goToStep(step) {
+            state.currentStep = step;
+
+            for (let i = 1; i <= 3; i++) {
+                const el = stepEls[i];
+                if (el) {
+                    el.classList.remove('active', 'completed');
+                    if (i < step) el.classList.add('completed');
+                    if (i === step) el.classList.add('active');
+                }
+                if (i < 3 && lines[i]) {
+                    lines[i].classList.toggle('completed', i < step);
+                }
+            }
+
+            step1Content.style.display = step === 1 ? 'block' : 'none';
+            step2Content.style.display = step === 2 ? 'block' : 'none';
+            step3Content.style.display = step === 3 ? 'block' : 'none';
+
+            document.querySelector('.container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ============================================================
+        // VALIDATION
+        // ============================================================
+        function validateStep1() {
+            let isValid = true;
+            let firstError = null;
+
+            // ФИО
+            if (fullName.value.trim().length < 3) {
+                fullName.classList.add('error');
+                fullName.classList.remove('success');
+                fullNameError.classList.add('show');
+                isValid = false;
+                if (!firstError) firstError = fullName;
+            } else {
+                fullName.classList.remove('error');
+                fullName.classList.add('success');
+                fullNameError.classList.remove('show');
+            }
+
+            // Email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            emailExistsError.classList.remove('show');
+            
+            if (!emailRegex.test(email.value.trim())) {
+                email.classList.add('error');
+                email.classList.remove('success');
+                emailError.classList.add('show');
+                isValid = false;
+                if (!firstError) firstError = email;
+            } else {
+                email.classList.remove('error');
+                email.classList.add('success');
+                emailError.classList.remove('show');
+                
+                // Проверка на существующий email
+                if (checkEmailExists(email.value.trim())) {
+                    email.classList.add('error');
+                    email.classList.remove('success');
+                    emailExistsError.classList.add('show');
+                    isValid = false;
+                    if (!firstError) firstError = email;
+                }
+            }
+
+            // Пароль
+            if (password.value.length < 6) {
+                password.classList.add('error');
+                password.classList.remove('success');
+                passwordError.classList.add('show');
+                isValid = false;
+                if (!firstError) firstError = password;
+            } else {
+                password.classList.remove('error');
+                password.classList.add('success');
+                passwordError.classList.remove('show');
+            }
+
+            // Подтверждение пароля
+            if (password.value !== confirmPassword.value || confirmPassword.value.length === 0) {
+                confirmPassword.classList.add('error');
+                confirmPassword.classList.remove('success');
+                confirmError.classList.add('show');
+                isValid = false;
+                if (!firstError) firstError = confirmPassword;
+            } else {
+                confirmPassword.classList.remove('error');
+                confirmPassword.classList.add('success');
+                confirmError.classList.remove('show');
+            }
+
+            // Согласие с условиями
+            if (!terms.checked) {
+                terms.style.outline = '2px solid #ef4444';
+                showToast('error', 'Примите условия использования');
+                isValid = false;
+            } else {
+                terms.style.outline = '';
+            }
+
+            // Фокус на первом ошибочном поле
+            if (firstError) {
+                setTimeout(() => firstError.focus(), 100);
+            }
+
+            return isValid;
+        }
+
+        // ============================================================
+        // EMAIL CHECK
+        // ============================================================
+        function checkEmailExists(emailToCheck) {
+            try {
+                const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                return users.some(u => u.email.toLowerCase() === emailToCheck.toLowerCase());
+            } catch {
+                return false;
+            }
+        }
+
+        // ============================================================
+        // GO TO STEP 2
+        // ============================================================
+        function goToStep2() {
+            if (validateStep1()) {
+                goToStep(2);
+            } else {
+                document.querySelector('.card').classList.add('shake');
+                setTimeout(() => {
+                    document.querySelector('.card').classList.remove('shake');
+                }, 400);
+            }
+        }
+
+        // ============================================================
+        // ROLE SELECTOR
+        // ============================================================
+        function selectRegisterRole(role) {
+            state.selectedRole = role;
+            document.getElementById('selectedRole').value = role;
+
+            document.querySelectorAll('.role-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            const target = document.querySelector(`.role-option[data-role="${role}"]`);
+            if (target) {
+                target.classList.add('selected');
+            }
+
+            showToast('info', `Выбрана роль: ${getRoleName(role)}`);
+        }
+
+        function getRoleName(role) {
+            const names = {
+                student: 'Студент',
+                teacher: 'Преподаватель',
+                admin: 'Администратор',
+                manager: 'Менеджер',
+                developer: 'Разработчик',
+                accountant: 'Бухгалтер'
+            };
+            return names[role] || role;
+        }
+
+        // ============================================================
+        // PASSWORD STRENGTH
+        // ============================================================
+        password.addEventListener('input', function() {
+            const val = this.value;
+            const bars = [
+                document.getElementById('bar1'),
+                document.getElementById('bar2'),
+                document.getElementById('bar3')
+            ];
+            const label = document.getElementById('strengthLabel');
+
+            bars.forEach(bar => bar.className = 'bar');
+            label.className = 'label';
+
+            if (val.length === 0) {
+                label.textContent = 'Слабый';
+                return;
+            }
+
+            let strength = 0;
+            if (val.length >= 6) strength++;
+            if (val.length >= 10) strength++;
+            if (/[A-Z]/.test(val) && /[a-z]/.test(val)) strength++;
+            if (/\d/.test(val)) strength++;
+            if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+            let level, levelClass;
+            if (strength <= 2) {
+                level = 'Слабый';
+                levelClass = 'weak';
+            } else if (strength <= 3) {
+                level = 'Средний';
+                levelClass = 'medium';
+            } else {
+                level = 'Сильный';
+                levelClass = 'strong';
+            }
+
+            const fillCount = Math.min(strength, 3);
+            for (let i = 0; i < 3; i++) {
+                bars[i].classList.add(i < fillCount ? levelClass : '');
+            }
+
+            label.textContent = level;
+            label.className = `label ${levelClass}`;
+        });
+
+        // ============================================================
+        // TOGGLE PASSWORD
+        // ============================================================
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // ============================================================
+        // HANDLE REGISTER
+        // ============================================================
+        async function handleRegister() {
+            // Проверяем выбранную роль
+            if (!state.selectedRole) {
+                showToast('error', 'Выберите роль');
+                return;
+            }
+
+            // Проверяем согласие с условиями
+            if (!terms.checked) {
+                showToast('error', 'Примите условия использования');
+                terms.style.outline = '2px solid #ef4444';
+                setTimeout(() => { terms.style.outline = ''; }, 2000);
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                // Собираем данные
+                const userData = {
+                    name: fullName.value.trim(),
+                    email: email.value.trim(),
+                    phone: phone.value.trim() || 'Не указан',
+                    role: state.selectedRole,
+                    registeredAt: new Date().toISOString()
+                };
+
+                // Проверяем email ещё раз (на случай, если кто-то зарегистрировался параллельно)
+                if (checkEmailExists(userData.email)) {
+                    showToast('error', 'Этот email уже зарегистрирован');
+                    setLoading(false);
+                    return;
+                }
+
+                // Сохраняем в список зарегистрированных пользователей
+                await saveUser(userData);
+
+                // Сохраняем текущего пользователя для сессии
+                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('userRole', state.selectedRole);
+
+                state.registeredUser = userData;
+
+                // Показываем успешную регистрацию
+                showSuccessStep(userData);
+
+            } catch (error) {
+                showToast('error', error.message || 'Ошибка регистрации');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // ============================================================
+        // SAVE USER
+        // ============================================================
+        function saveUser(userData) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Получаем существующих пользователей
+                    let users = [];
+                    try {
+                        const stored = localStorage.getItem('registeredUsers');
+                        if (stored) {
+                            users = JSON.parse(stored);
+                        }
+                    } catch (e) {
+                        users = [];
+                    }
+
+                    // Добавляем нового пользователя
+                    users.push(userData);
+
+                    // Сохраняем обратно
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+                    // Также сохраняем в отдельный ключ для быстрого доступа
+                    localStorage.setItem('lastRegisteredUser', JSON.stringify(userData));
+
+                    resolve();
+                }, 800);
+            });
+        }
+
+        // ============================================================
+        // SHOW SUCCESS
+        // ============================================================
+        function showSuccessStep(userData) {
+            // Заполняем информацию
+            document.getElementById('displayName').textContent = userData.name;
+            document.getElementById('displayEmail').textContent = userData.email;
+            document.getElementById('displayPhone').textContent = userData.phone;
+            document.getElementById('displayRole').textContent = getRoleName(userData.role);
+
+            // Переходим на шаг 3
+            goToStep(3);
+
+            showToast('success', `Добро пожаловать, ${userData.name}! Регистрация успешна!`);
+        }
+
+        // ============================================================
+        // UI HELPERS
+        // ============================================================
+        function setLoading(loading) {
+            state.isLoading = loading;
+            if (loading) {
+                registerBtn.disabled = true;
+                registerBtnText.innerHTML = '<span class="spinner"></span> Регистрация...';
+            } else {
+                registerBtn.disabled = false;
+                registerBtnText.innerHTML = '<i class="fas fa-user-plus"></i> Зарегистрироваться';
+            }
+        }
+
+        function showToast(type, message) {
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+
+            toast.className = 'toast';
+            toast.classList.add(type);
+            toast.querySelector('i').className = `fas ${icons[type] || icons.info}`;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============================================================
+        // KEYBOARD SHORTCUTS
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (state.currentStep === 1) {
+                    goToStep2();
+                } else if (state.currentStep === 2) {
+                    handleRegister();
+                }
+            }
+        });
+
+        // ============================================================
+        // AUTO-LOGIN CHECK
+        // ============================================================
+        (function checkAuth() {
+            const isAuth = localStorage.getItem('isAuthenticated');
+            if (isAuth === 'true') {
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                if (user.email) {
+                    // Если уже авторизован, перенаправляем на dashboard
+                    window.location.href = 'dashboard.html';
+                }
+            }
+        })();
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        // Выбираем роль по умолчанию
+        selectRegisterRole('student');
+
+        console.log('📝 Страница регистрации загружена (исправленная версия)');
+        console.log('📌 Пользователи сохраняются в localStorage в ключе "registeredUsers"');
+        console.log('🔑 После регистрации вы будете перенаправлены на шаг успеха');
+        console.log('🔗 Ссылки: index.html, login.html, dashboard.html');
+        console.log('📊 Всего зарегистрированных пользователей:', 
+            JSON.parse(localStorage.getItem('registeredUsers') || '[]').length);
+    </script>
+
+</body>
+</html>
